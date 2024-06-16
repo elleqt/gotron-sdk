@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/fbsobreira/gotron-sdk/pkg/keys"
+	"github.com/elleqt/gotron-sdk/pkg/keys"
 	"github.com/stretchr/testify/assert"
 )
 

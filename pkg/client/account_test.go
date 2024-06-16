@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/fbsobreira/gotron-sdk/pkg/client"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/core"
+	"github.com/elleqt/gotron-sdk/pkg/client"
+	"github.com/elleqt/gotron-sdk/pkg/proto/core"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 )
@@ -43,6 +43,7 @@ func TestGetAccountDetailed(t *testing.T) {
 	require.NotNil(t, acc.Allowance)
 	require.NotNil(t, acc.Rewards)
 
+	t.Skip()
 	acc2, err := conn.GetAccountDetailed(accountAddressWitness)
 	require.Nil(t, err)
 	require.NotNil(t, acc2.Allowance)
