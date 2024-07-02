@@ -11,7 +11,7 @@ import (
 )
 
 // FreezeBalance from base58 address
-func (g *GrpcClient) FreezeBalance(ctx context.Context, from, delegateTo string,
+func (g *Client) FreezeBalance(ctx context.Context, from, delegateTo string,
 	resource core.ResourceCode, frozenBalance int64) (*api.TransactionExtention, error) {
 	var err error
 
@@ -45,7 +45,7 @@ func (g *GrpcClient) FreezeBalance(ctx context.Context, from, delegateTo string,
 }
 
 // FreezeBalance from base58 address
-func (g *GrpcClient) FreezeBalanceV2(ctx context.Context, from string,
+func (g *Client) FreezeBalanceV2(ctx context.Context, from string,
 	resource core.ResourceCode, frozenBalance int64) (*api.TransactionExtention, error) {
 	var err error
 
@@ -71,7 +71,7 @@ func (g *GrpcClient) FreezeBalanceV2(ctx context.Context, from string,
 }
 
 // UnfreezeBalance from base58 address
-func (g *GrpcClient) UnfreezeBalance(ctx context.Context, from, delegateTo string, resource core.ResourceCode) (*api.TransactionExtention, error) {
+func (g *Client) UnfreezeBalance(ctx context.Context, from, delegateTo string, resource core.ResourceCode) (*api.TransactionExtention, error) {
 	var err error
 
 	contract := &core.UnfreezeBalanceContract{}
@@ -101,7 +101,7 @@ func (g *GrpcClient) UnfreezeBalance(ctx context.Context, from, delegateTo strin
 }
 
 // UnfreezeBalance from base58 address
-func (g *GrpcClient) UnfreezeBalanceV2(ctx context.Context, from string, resource core.ResourceCode, unfreezeBalance int64) (*api.TransactionExtention, error) {
+func (g *Client) UnfreezeBalanceV2(ctx context.Context, from string, resource core.ResourceCode, unfreezeBalance int64) (*api.TransactionExtention, error) {
 	var err error
 
 	contract := &core.UnfreezeBalanceV2Contract{}
@@ -126,7 +126,7 @@ func (g *GrpcClient) UnfreezeBalanceV2(ctx context.Context, from string, resourc
 }
 
 // GetAvailableUnfreezeCount from base58 address
-func (g *GrpcClient) GetAvailableUnfreezeCount(ctx context.Context, from string) (*api.GetAvailableUnfreezeCountResponseMessage, error) {
+func (g *Client) GetAvailableUnfreezeCount(ctx context.Context, from string) (*api.GetAvailableUnfreezeCountResponseMessage, error) {
 	var err error
 
 	contract := &api.GetAvailableUnfreezeCountRequestMessage{}
@@ -143,7 +143,7 @@ func (g *GrpcClient) GetAvailableUnfreezeCount(ctx context.Context, from string)
 }
 
 // GetCanWithdrawUnfreezeAmount from base58 address
-func (g *GrpcClient) GetCanWithdrawUnfreezeAmount(ctx context.Context, from string, timestamp int64) (*api.CanWithdrawUnfreezeAmountResponseMessage, error) {
+func (g *Client) GetCanWithdrawUnfreezeAmount(ctx context.Context, from string, timestamp int64) (*api.CanWithdrawUnfreezeAmountResponseMessage, error) {
 	var err error
 
 	contract := &api.CanWithdrawUnfreezeAmountRequestMessage{}
@@ -161,7 +161,7 @@ func (g *GrpcClient) GetCanWithdrawUnfreezeAmount(ctx context.Context, from stri
 }
 
 // WithdrawExpireUnfreeze from base58 address
-func (g *GrpcClient) WithdrawExpireUnfreeze(ctx context.Context, from string, timestamp int64) (*api.TransactionExtention, error) {
+func (g *Client) WithdrawExpireUnfreeze(ctx context.Context, from string, timestamp int64) (*api.TransactionExtention, error) {
 	var err error
 
 	contract := &core.WithdrawExpireUnfreezeContract{}

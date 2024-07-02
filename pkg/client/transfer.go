@@ -11,7 +11,7 @@ import (
 )
 
 // Transfer from to base58 address
-func (g *GrpcClient) Transfer(ctx context.Context, from, toAddress string, amount int64) (*api.TransactionExtention, error) {
+func (g *Client) Transfer(ctx context.Context, from, toAddress string, amount int64) (*api.TransactionExtention, error) {
 	var err error
 
 	contract := &core.TransferContract{}

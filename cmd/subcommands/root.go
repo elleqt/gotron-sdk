@@ -44,7 +44,7 @@ var (
 	timeout                uint32
 	withTLS                bool
 	apiKey                 string
-	conn                   *client.GrpcClient
+	conn                   *client.Client
 	// RootCmd is single entry point of the CLI
 	RootCmd = &cobra.Command{
 		Use:          "tronctl",
@@ -58,7 +58,7 @@ var (
 			case 1:
 				node = node + ":50051"
 			}
-			conn = client.NewGrpcClient(node)
+			conn = client.New(node)
 
 			// load grpc options
 			opts := make([]grpc.DialOption, 0)
@@ -67,13 +67,6 @@ var (
 			} else {
 				opts = append(opts, grpc.WithInsecure())
 			}
-
-			// check for env API Key
-			if trongridKey := os.Getenv("TRONGRID_APIKEY"); len(trongridKey) > 0 {
-				apiKey = trongridKey
-			}
-			// set API
-			conn.SetAPIKey(apiKey)
 
 			if err := conn.Start(opts...); err != nil {
 				return err

@@ -14,7 +14,7 @@ import (
 )
 
 // GetAssetIssueByAccount list asset issued by account
-func (g *GrpcClient) GetAssetIssueByAccount(ctx context.Context, address string) (*api.AssetIssueList, error) {
+func (g *Client) GetAssetIssueByAccount(ctx context.Context, address string) (*api.AssetIssueList, error) {
 	account := new(core.Account)
 	var err error
 
@@ -27,19 +27,19 @@ func (g *GrpcClient) GetAssetIssueByAccount(ctx context.Context, address string)
 }
 
 // GetAssetIssueByName list asset issued by name
-func (g *GrpcClient) GetAssetIssueByName(ctx context.Context, name string) (*core.AssetIssueContract, error) {
+func (g *Client) GetAssetIssueByName(ctx context.Context, name string) (*core.AssetIssueContract, error) {
 	return g.Client.GetAssetIssueByName(ctx, GetMessageBytes([]byte(name)))
 }
 
 // GetAssetIssueByID list asset issued by ID
-func (g *GrpcClient) GetAssetIssueByID(ctx context.Context, tokenID string) (*core.AssetIssueContract, error) {
+func (g *Client) GetAssetIssueByID(ctx context.Context, tokenID string) (*core.AssetIssueContract, error) {
 	bn := new(big.Int).SetBytes([]byte(tokenID))
 
 	return g.Client.GetAssetIssueById(ctx, GetMessageBytes(bn.Bytes()))
 }
 
 // GetAssetIssueList list all TRC10
-func (g *GrpcClient) GetAssetIssueList(ctx context.Context, page int64, limit ...int) (*api.AssetIssueList, error) {
+func (g *Client) GetAssetIssueList(ctx context.Context, page int64, limit ...int) (*api.AssetIssueList, error) {
 	if page == -1 {
 		return g.Client.GetAssetIssueList(ctx, new(api.EmptyMessage))
 	}
@@ -52,7 +52,7 @@ func (g *GrpcClient) GetAssetIssueList(ctx context.Context, page int64, limit ..
 }
 
 // AssetIssue create a new asset TRC10
-func (g *GrpcClient) AssetIssue(ctx context.Context, from, name, description, abbr, urlStr string,
+func (g *Client) AssetIssue(ctx context.Context, from, name, description, abbr, urlStr string,
 	precision int32, totalSupply, startTime, endTime, FreeAssetNetLimit, PublicFreeAssetNetLimit int64,
 	trxNum, icoNum, voteScore int32, frozenSupply map[string]string) (*api.TransactionExtention, error) {
 	var err error
@@ -138,7 +138,7 @@ func (g *GrpcClient) AssetIssue(ctx context.Context, from, name, description, ab
 }
 
 // UpdateAssetIssue information
-func (g *GrpcClient) UpdateAssetIssue(ctx context.Context, from, description, urlStr string,
+func (g *Client) UpdateAssetIssue(ctx context.Context, from, description, urlStr string,
 	newLimit, newPublicLimit int64) (*api.TransactionExtention, error) {
 	var err error
 
@@ -166,7 +166,7 @@ func (g *GrpcClient) UpdateAssetIssue(ctx context.Context, from, description, ur
 }
 
 // TransferAsset from to  base58 address
-func (g *GrpcClient) TransferAsset(ctx context.Context, from, toAddress,
+func (g *Client) TransferAsset(ctx context.Context, from, toAddress,
 	assetName string, amount int64) (*api.TransactionExtention, error) {
 	var err error
 	contract := &core.TransferAssetContract{}
@@ -194,7 +194,7 @@ func (g *GrpcClient) TransferAsset(ctx context.Context, from, toAddress,
 }
 
 // ParticipateAssetIssue TRC10 ICO
-func (g *GrpcClient) ParticipateAssetIssue(ctx context.Context, from, issuerAddress,
+func (g *Client) ParticipateAssetIssue(ctx context.Context, from, issuerAddress,
 	tokenID string, amount int64) (*api.TransactionExtention, error) {
 	var err error
 	contract := &core.ParticipateAssetIssueContract{}
@@ -222,7 +222,7 @@ func (g *GrpcClient) ParticipateAssetIssue(ctx context.Context, from, issuerAddr
 }
 
 // UnfreezeAsset from owner
-func (g *GrpcClient) UnfreezeAsset(ctx context.Context, from string) (*api.TransactionExtention, error) {
+func (g *Client) UnfreezeAsset(ctx context.Context, from string) (*api.TransactionExtention, error) {
 	var err error
 
 	contract := &core.UnfreezeAssetContract{}

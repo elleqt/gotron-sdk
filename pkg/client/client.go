@@ -2,76 +2,52 @@ package client
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/elleqt/gotron-sdk/pkg/proto/api"
 	"google.golang.org/grpc"
 )
 
-// GrpcClient controller structure
-type GrpcClient struct {
-	Address     string
-	Conn        *grpc.ClientConn
-	Client      api.WalletClient
-	grpcTimeout time.Duration
-	opts        []grpc.DialOption
-	apiKey      string
+// Client controller structure
+type Client struct {
+	Address string
+	Conn    *grpc.ClientConn
+	Client  api.WalletClient
+	opts    []grpc.DialOption
 }
 
-// NewGrpcClient create grpc controller
-func NewGrpcClient(address string) *GrpcClient {
-	client := &GrpcClient{
-		Address:     address,
-		grpcTimeout: 5 * time.Second,
+// New create grpc controller
+func New(address string) *Client {
+	client := &Client{
+		Address: address,
 	}
 	return client
-}
-
-// NewGrpcClientWithTimeout create grpc controller
-func NewGrpcClientWithTimeout(address string, timeout time.Duration) *GrpcClient {
-	client := &GrpcClient{
-		Address:     address,
-		grpcTimeout: timeout,
-	}
-	return client
-}
-
-// SetTimeout for Client connections
-func (g *GrpcClient) SetTimeout(timeout time.Duration) {
-	g.grpcTimeout = timeout
 }
 
 // Start initiate grpc  connection
-func (g *GrpcClient) Start(opts ...grpc.DialOption) error {
+func (g *Client) Start(opts ...grpc.DialOption) error {
 	var err error
 	if len(g.Address) == 0 {
 		g.Address = "grpc.trongrid.io:50051"
 	}
 	g.opts = opts
-	g.Conn, err = grpc.Dial(g.Address, opts...)
+	g.Conn, err = grpc.NewClient(g.Address, opts...)
 
 	if err != nil {
-		return fmt.Errorf("Connecting GRPC Client: %v", err)
+		return fmt.Errorf("connecting GRPC Client: %v", err)
 	}
 	g.Client = api.NewWalletClient(g.Conn)
 	return nil
 }
 
-// SetAPIKey enable API on connection
-func (g *GrpcClient) SetAPIKey(apiKey string) error {
-	g.apiKey = apiKey
-	return nil
-}
-
 // Stop GRPC Connection
-func (g *GrpcClient) Stop() {
+func (g *Client) Stop() {
 	if g.Conn != nil {
 		g.Conn.Close()
 	}
 }
 
 // Reconnect GRPC
-func (g *GrpcClient) Reconnect(url string) error {
+func (g *Client) Reconnect(url string) error {
 	g.Stop()
 	if len(url) > 0 {
 		g.Address = url

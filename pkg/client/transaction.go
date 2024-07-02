@@ -8,7 +8,7 @@ import (
 )
 
 // GetTransactionSignWeight queries transaction sign weight
-func (g *GrpcClient) GetTransactionSignWeight(ctx context.Context, tx *core.Transaction) (*api.TransactionSignWeight, error) {
+func (g *Client) GetTransactionSignWeight(ctx context.Context, tx *core.Transaction) (*api.TransactionSignWeight, error) {
 	result, err := g.Client.GetTransactionSignWeight(ctx, tx)
 	if err != nil {
 		return nil, err

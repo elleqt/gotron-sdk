@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	conn                              *client.GrpcClient
+	conn                              *client.Client
 	apiKey                            = "622ec85e-7406-431d-9caf-0a19501469a4"
 	tronAddress                       = "grpc.nile.trongrid.io:50051"
 	accountAddress                    = "TPpw7soPWEDQWXPCGUMagYPryaWrYR5b3b"
@@ -26,13 +26,11 @@ func TestMain(m *testing.M) {
 	opts := make([]grpc.DialOption, 0)
 	opts = append(opts, grpc.WithInsecure())
 
-	conn = client.NewGrpcClient(tronAddress)
+	conn = client.New(tronAddress)
 
 	if err := conn.Start(opts...); err != nil {
 		_ = fmt.Errorf("Error connecting GRPC Client: %v", err)
 	}
-
-	conn.SetAPIKey(apiKey)
 
 	exitVal := m.Run()
 	os.Exit(exitVal)

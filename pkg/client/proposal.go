@@ -11,12 +11,12 @@ import (
 )
 
 // ProposalsList return all network proposals
-func (g *GrpcClient) ProposalsList(ctx context.Context) (*api.ProposalList, error) {
+func (g *Client) ProposalsList(ctx context.Context) (*api.ProposalList, error) {
 	return g.Client.ListProposals(ctx, new(api.EmptyMessage))
 }
 
 // ProposalCreate create proposal based on parameter list
-func (g *GrpcClient) ProposalCreate(ctx context.Context, from string, parameters map[int64]int64) (*api.TransactionExtention, error) {
+func (g *Client) ProposalCreate(ctx context.Context, from string, parameters map[int64]int64) (*api.TransactionExtention, error) {
 	var err error
 
 	contract := &core.ProposalCreateContract{
@@ -40,7 +40,7 @@ func (g *GrpcClient) ProposalCreate(ctx context.Context, from string, parameters
 }
 
 // ProposalApprove change URL info
-func (g *GrpcClient) ProposalApprove(ctx context.Context, from string, id int64, confirm bool) (*api.TransactionExtention, error) {
+func (g *Client) ProposalApprove(ctx context.Context, from string, id int64, confirm bool) (*api.TransactionExtention, error) {
 	var err error
 
 	contract := &core.ProposalApproveContract{
@@ -64,7 +64,7 @@ func (g *GrpcClient) ProposalApprove(ctx context.Context, from string, id int64,
 	return tx, nil
 }
 
-func (g *GrpcClient) ProposalWithdraw(ctx context.Context, from string, id int64) (*api.TransactionExtention, error) {
+func (g *Client) ProposalWithdraw(ctx context.Context, from string, id int64) (*api.TransactionExtention, error) {
 	var err error
 
 	contract := &core.ProposalDeleteContract{

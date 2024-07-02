@@ -34,7 +34,7 @@ func TestProtoParse(t *testing.T) {
 }
 
 func TestProtoParseR(t *testing.T) {
-	conn := client.NewGrpcClient("grpc.trongrid.io:50051")
+	conn := client.New("grpc.trongrid.io:50051")
 	err := conn.Start(grpc.WithInsecure())
 	require.Nil(t, err)
 	block, err := conn.GetBlockByNum(context.Background(), 48763870)
@@ -56,7 +56,7 @@ func TestProtoParseR(t *testing.T) {
 }
 
 func TestEstimateEnergy(t *testing.T) {
-	conn := client.NewGrpcClient("grpc.nile.trongrid.io:50051")
+	conn := client.New("grpc.nile.trongrid.io:50051")
 	err := conn.Start(grpc.WithInsecure())
 	require.Nil(t, err)
 
@@ -73,7 +73,7 @@ func TestEstimateEnergy(t *testing.T) {
 }
 
 func TestGetAccount(t *testing.T) {
-	conn := client.NewGrpcClient("grpc.trongrid.io:50051")
+	conn := client.New("grpc.trongrid.io:50051")
 	err := conn.Start(grpc.WithInsecure())
 	require.Nil(t, err)
 
@@ -100,7 +100,7 @@ func TestGetAccount(t *testing.T) {
 }
 
 func TestGetAccount2(t *testing.T) {
-	conn := client.NewGrpcClient("grpc.trongrid.io:50051")
+	conn := client.New("grpc.trongrid.io:50051")
 	err := conn.Start(grpc.WithInsecure())
 	require.Nil(t, err)
 
@@ -110,7 +110,7 @@ func TestGetAccount2(t *testing.T) {
 }
 
 func TestGetAccountMigrationContract(t *testing.T) {
-	conn := client.NewGrpcClient("grpc.trongrid.io:50051")
+	conn := client.New("grpc.trongrid.io:50051")
 	err := conn.Start(grpc.WithInsecure())
 	require.Nil(t, err)
 
@@ -135,7 +135,7 @@ func TestGetAccountMigrationContract(t *testing.T) {
 
 // TestGetEnergyPrices tests the GetEnergyPrices function
 func TestGetEnergyPrices(t *testing.T) {
-	conn := client.NewGrpcClient("grpc.trongrid.io:50051")
+	conn := client.New("grpc.trongrid.io:50051")
 	err := conn.Start(grpc.WithInsecure())
 	require.Nil(t, err)
 
@@ -165,7 +165,7 @@ func TestGetEnergyPrices(t *testing.T) {
 
 // TestGetBandwidthPrices tests the GetBandwidthPrices function
 func TestGetBandwidthPrices(t *testing.T) {
-	conn := client.NewGrpcClient("grpc.trongrid.io:50051")
+	conn := client.New("grpc.trongrid.io:50051")
 	err := conn.Start(grpc.WithInsecure())
 	require.Nil(t, err)
 

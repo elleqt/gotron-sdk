@@ -15,7 +15,7 @@ import (
 )
 
 // UpdateEnergyLimitContract update contract enery limit
-func (g *GrpcClient) UpdateEnergyLimitContract(ctx context.Context, from, contractAddress string, value int64) (*api.TransactionExtention, error) {
+func (g *Client) UpdateEnergyLimitContract(ctx context.Context, from, contractAddress string, value int64) (*api.TransactionExtention, error) {
 	fromDesc, err := address.Base58ToAddress(from)
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func (g *GrpcClient) UpdateEnergyLimitContract(ctx context.Context, from, contra
 }
 
 // UpdateSettingContract change contract owner consumption ratio
-func (g *GrpcClient) UpdateSettingContract(ctx context.Context, from, contractAddress string, value int64) (*api.TransactionExtention, error) {
+func (g *Client) UpdateSettingContract(ctx context.Context, from, contractAddress string, value int64) (*api.TransactionExtention, error) {
 	fromDesc, err := address.Base58ToAddress(from)
 	if err != nil {
 		return nil, err
@@ -75,7 +75,7 @@ func (g *GrpcClient) UpdateSettingContract(ctx context.Context, from, contractAd
 }
 
 // TriggerConstantContract and return tx result
-func (g *GrpcClient) TriggerConstantContract(ctx context.Context, from, contractAddress, method, jsonString string) (*api.TransactionExtention, error) {
+func (g *Client) TriggerConstantContract(ctx context.Context, from, contractAddress, method, jsonString string) (*api.TransactionExtention, error) {
 	var err error
 	fromDesc := address.HexToAddress("410000000000000000000000000000000000000000")
 	if len(from) > 0 {
@@ -109,12 +109,12 @@ func (g *GrpcClient) TriggerConstantContract(ctx context.Context, from, contract
 }
 
 // triggerConstantContract and return tx result
-func (g *GrpcClient) triggerConstantContract(ctx context.Context, ct *core.TriggerSmartContract) (*api.TransactionExtention, error) {
+func (g *Client) triggerConstantContract(ctx context.Context, ct *core.TriggerSmartContract) (*api.TransactionExtention, error) {
 	return g.Client.TriggerConstantContract(ctx, ct)
 }
 
 // TriggerContract and return tx result
-func (g *GrpcClient) TriggerContract(ctx context.Context, from, contractAddress, method, jsonString string,
+func (g *Client) TriggerContract(ctx context.Context, from, contractAddress, method, jsonString string,
 	feeLimit, tAmount int64, tTokenID string, tTokenAmount int64) (*api.TransactionExtention, error) {
 	fromDesc, err := address.Base58ToAddress(from)
 	if err != nil {
@@ -156,7 +156,7 @@ func (g *GrpcClient) TriggerContract(ctx context.Context, from, contractAddress,
 }
 
 // triggerContract and return tx result
-func (g *GrpcClient) triggerContract(ctx context.Context, ct *core.TriggerSmartContract, feeLimit int64) (*api.TransactionExtention, error) {
+func (g *Client) triggerContract(ctx context.Context, ct *core.TriggerSmartContract, feeLimit int64) (*api.TransactionExtention, error) {
 	tx, err := g.Client.TriggerContract(ctx, ct)
 	if err != nil {
 		return nil, err
@@ -174,7 +174,7 @@ func (g *GrpcClient) triggerContract(ctx context.Context, ct *core.TriggerSmartC
 }
 
 // EstimateEnergy returns enery required
-func (g *GrpcClient) EstimateEnergy(ctx context.Context, from, contractAddress, method, jsonString string,
+func (g *Client) EstimateEnergy(ctx context.Context, from, contractAddress, method, jsonString string,
 	tAmount int64, tTokenID string, tTokenAmount int64) (*api.EstimateEnergyMessage, error) {
 	fromDesc, err := address.Base58ToAddress(from)
 	if err != nil {
@@ -216,7 +216,7 @@ func (g *GrpcClient) EstimateEnergy(ctx context.Context, from, contractAddress, 
 }
 
 // triggerContract and return tx result
-func (g *GrpcClient) estimateEnergy(ctx context.Context, ct *core.TriggerSmartContract) (*api.EstimateEnergyMessage, error) {
+func (g *Client) estimateEnergy(ctx context.Context, ct *core.TriggerSmartContract) (*api.EstimateEnergyMessage, error) {
 	tx, err := g.Client.EstimateEnergy(ctx, ct)
 	if err != nil {
 		return nil, err
@@ -230,7 +230,7 @@ func (g *GrpcClient) estimateEnergy(ctx context.Context, ct *core.TriggerSmartCo
 }
 
 // GetBandwidthPrices retrieves bandwidth prices
-func (g *GrpcClient) GetBandwidthPrices(ctx context.Context) (*api.PricesResponseMessage, error) {
+func (g *Client) GetBandwidthPrices(ctx context.Context) (*api.PricesResponseMessage, error) {
 	result, err := g.Client.GetBandwidthPrices(ctx, new(api.EmptyMessage))
 	if err != nil {
 		return nil, fmt.Errorf("get bandwidth prices: %v", err)
@@ -240,7 +240,7 @@ func (g *GrpcClient) GetBandwidthPrices(ctx context.Context) (*api.PricesRespons
 }
 
 // GetEnergyPrices retrieves energy prices
-func (g *GrpcClient) GetEnergyPrices(ctx context.Context) (*api.PricesResponseMessage, error) {
+func (g *Client) GetEnergyPrices(ctx context.Context) (*api.PricesResponseMessage, error) {
 	result, err := g.Client.GetEnergyPrices(ctx, new(api.EmptyMessage))
 	if err != nil {
 		return nil, fmt.Errorf("get energy prices: %v", err)
@@ -250,7 +250,7 @@ func (g *GrpcClient) GetEnergyPrices(ctx context.Context) (*api.PricesResponseMe
 }
 
 // DeployContract and return tx result
-func (g *GrpcClient) DeployContract(ctx context.Context, from, contractName string,
+func (g *Client) DeployContract(ctx context.Context, from, contractName string,
 	abi *core.SmartContract_ABI, codeStr string,
 	feeLimit, curPercent, oeLimit int64,
 ) (*api.TransactionExtention, error) {
@@ -299,7 +299,7 @@ func (g *GrpcClient) DeployContract(ctx context.Context, from, contractName stri
 }
 
 // UpdateHash after local changes
-func (g *GrpcClient) UpdateHash(tx *api.TransactionExtention) error {
+func (g *Client) UpdateHash(tx *api.TransactionExtention) error {
 	rawData, err := proto.Marshal(tx.Transaction.GetRawData())
 	if err != nil {
 		return err
@@ -313,7 +313,7 @@ func (g *GrpcClient) UpdateHash(tx *api.TransactionExtention) error {
 }
 
 // GetContractABI return smartContract
-func (g *GrpcClient) GetContractABI(ctx context.Context, contractAddress string) (*core.SmartContract_ABI, error) {
+func (g *Client) GetContractABI(ctx context.Context, contractAddress string) (*core.SmartContract_ABI, error) {
 	var err error
 	contractDesc, err := address.Base58ToAddress(contractAddress)
 	if err != nil {

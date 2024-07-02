@@ -25,7 +25,7 @@ const (
 )
 
 // TRC20Call make cosntant calll
-func (g *GrpcClient) TRC20Call(ctx context.Context, from, contractAddress, data string, constant bool, feeLimit int64) (*api.TransactionExtention, error) {
+func (g *Client) TRC20Call(ctx context.Context, from, contractAddress, data string, constant bool, feeLimit int64) (*api.TransactionExtention, error) {
 	var err error
 	fromDesc := address.HexToAddress("410000000000000000000000000000000000000000")
 	if len(from) > 0 {
@@ -64,7 +64,7 @@ func (g *GrpcClient) TRC20Call(ctx context.Context, from, contractAddress, data 
 }
 
 // TRC20GetName get token name
-func (g *GrpcClient) TRC20GetName(ctx context.Context, contractAddress string) (string, error) {
+func (g *Client) TRC20GetName(ctx context.Context, contractAddress string) (string, error) {
 	result, err := g.TRC20Call(ctx, "", contractAddress, trc20NameSignature, true, 0)
 	if err != nil {
 		return "", err
@@ -74,7 +74,7 @@ func (g *GrpcClient) TRC20GetName(ctx context.Context, contractAddress string) (
 }
 
 // TRC20GetSymbol get contract symbol
-func (g *GrpcClient) TRC20GetSymbol(ctx context.Context, contractAddress string) (string, error) {
+func (g *Client) TRC20GetSymbol(ctx context.Context, contractAddress string) (string, error) {
 	result, err := g.TRC20Call(ctx, "", contractAddress, trc20SymbolSignature, true, 0)
 	if err != nil {
 		return "", err
@@ -84,7 +84,7 @@ func (g *GrpcClient) TRC20GetSymbol(ctx context.Context, contractAddress string)
 }
 
 // TRC20GetDecimals get contract decimals
-func (g *GrpcClient) TRC20GetDecimals(ctx context.Context, contractAddress string) (*big.Int, error) {
+func (g *Client) TRC20GetDecimals(ctx context.Context, contractAddress string) (*big.Int, error) {
 	result, err := g.TRC20Call(ctx, "", contractAddress, trc20DecimalsSignature, true, 0)
 	if err != nil {
 		return nil, err
@@ -94,7 +94,7 @@ func (g *GrpcClient) TRC20GetDecimals(ctx context.Context, contractAddress strin
 }
 
 // ParseTRC20NumericProperty get number from data
-func (g *GrpcClient) ParseTRC20NumericProperty(data string) (*big.Int, error) {
+func (g *Client) ParseTRC20NumericProperty(data string) (*big.Int, error) {
 	if common.Has0xPrefix(data) {
 		data = data[2:]
 	}
@@ -114,7 +114,7 @@ func (g *GrpcClient) ParseTRC20NumericProperty(data string) (*big.Int, error) {
 }
 
 // ParseTRC20StringProperty get string from data
-func (g *GrpcClient) ParseTRC20StringProperty(data string) (string, error) {
+func (g *Client) ParseTRC20StringProperty(data string) (string, error) {
 	if common.Has0xPrefix(data) {
 		data = data[2:]
 	}
@@ -146,7 +146,7 @@ func (g *GrpcClient) ParseTRC20StringProperty(data string) (string, error) {
 }
 
 // TRC20ContractBalance get Address balance
-func (g *GrpcClient) TRC20ContractBalance(ctx context.Context, addr, contractAddress string) (*big.Int, error) {
+func (g *Client) TRC20ContractBalance(ctx context.Context, addr, contractAddress string) (*big.Int, error) {
 	addrB, err := address.Base58ToAddress(addr)
 	if err != nil {
 		return nil, fmt.Errorf("invalid address %s: %v", addr, addr)
@@ -168,7 +168,7 @@ func (g *GrpcClient) TRC20ContractBalance(ctx context.Context, addr, contractAdd
 }
 
 // TRC20Send send token to address
-func (g *GrpcClient) TRC20Send(ctx context.Context, from, to, contract string, amount *big.Int, feeLimit int64) (*api.TransactionExtention, error) {
+func (g *Client) TRC20Send(ctx context.Context, from, to, contract string, amount *big.Int, feeLimit int64) (*api.TransactionExtention, error) {
 	addrB, err := address.Base58ToAddress(to)
 	if err != nil {
 		return nil, err
@@ -180,7 +180,7 @@ func (g *GrpcClient) TRC20Send(ctx context.Context, from, to, contract string, a
 }
 
 // TRC20Approve approve token to address
-func (g *GrpcClient) TRC20Approve(ctx context.Context, from, to, contract string, amount *big.Int, feeLimit int64) (*api.TransactionExtention, error) {
+func (g *Client) TRC20Approve(ctx context.Context, from, to, contract string, amount *big.Int, feeLimit int64) (*api.TransactionExtention, error) {
 	addrB, err := address.Base58ToAddress(to)
 	if err != nil {
 		return nil, err

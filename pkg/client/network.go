@@ -13,7 +13,7 @@ import (
 )
 
 // ListNodes provides list of network nodes
-func (g *GrpcClient) ListNodes(ctx context.Context) (*api.NodeList, error) {
+func (g *Client) ListNodes(ctx context.Context) (*api.NodeList, error) {
 	nodeList, err := g.Client.ListNodes(ctx, new(api.EmptyMessage))
 	if err != nil {
 		zap.L().Error("List nodes", zap.Error(err))
@@ -22,19 +22,19 @@ func (g *GrpcClient) ListNodes(ctx context.Context) (*api.NodeList, error) {
 }
 
 // GetNextMaintenanceTime get next epoch timestamp
-func (g *GrpcClient) GetNextMaintenanceTime(ctx context.Context) (*api.NumberMessage, error) {
+func (g *Client) GetNextMaintenanceTime(ctx context.Context) (*api.NumberMessage, error) {
 	return g.Client.GetNextMaintenanceTime(ctx,
 		new(api.EmptyMessage))
 }
 
 // TotalTransaction return total transciton in network
-func (g *GrpcClient) TotalTransaction(ctx context.Context) (*api.NumberMessage, error) {
+func (g *Client) TotalTransaction(ctx context.Context) (*api.NumberMessage, error) {
 	return g.Client.TotalTransaction(ctx,
 		new(api.EmptyMessage))
 }
 
 // GetTransactionByID returns transaction details by ID
-func (g *GrpcClient) GetTransactionByID(ctx context.Context, id string) (*core.Transaction, error) {
+func (g *Client) GetTransactionByID(ctx context.Context, id string) (*core.Transaction, error) {
 	transactionID := new(api.BytesMessage)
 	var err error
 
@@ -54,7 +54,7 @@ func (g *GrpcClient) GetTransactionByID(ctx context.Context, id string) (*core.T
 }
 
 // GetTransactionInfoByID returns transaction receipt by ID
-func (g *GrpcClient) GetTransactionInfoByID(ctx context.Context, id string) (*core.TransactionInfo, error) {
+func (g *Client) GetTransactionInfoByID(ctx context.Context, id string) (*core.TransactionInfo, error) {
 	transactionID := new(api.BytesMessage)
 	var err error
 
@@ -74,7 +74,7 @@ func (g *GrpcClient) GetTransactionInfoByID(ctx context.Context, id string) (*co
 }
 
 // Broadcast broadcast TX
-func (g *GrpcClient) Broadcast(ctx context.Context, tx *core.Transaction) (*api.Return, error) {
+func (g *Client) Broadcast(ctx context.Context, tx *core.Transaction) (*api.Return, error) {
 	result, err := g.Client.BroadcastTransaction(ctx, tx)
 	if err != nil {
 		return nil, err
@@ -89,6 +89,6 @@ func (g *GrpcClient) Broadcast(ctx context.Context, tx *core.Transaction) (*api.
 }
 
 // GetNodeInfo current connection
-func (g *GrpcClient) GetNodeInfo(ctx context.Context) (*core.NodeInfo, error) {
+func (g *Client) GetNodeInfo(ctx context.Context) (*core.NodeInfo, error) {
 	return g.Client.GetNodeInfo(ctx, new(api.EmptyMessage))
 }

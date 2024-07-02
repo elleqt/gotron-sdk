@@ -14,7 +14,7 @@ func TestTRC20_Balance(t *testing.T) {
 	trc20Contract := "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t" // USDT
 	address := "TMuA6YqfCeX8EhbfYEg5y7S4DqzSJireY9"
 
-	conn := client.NewGrpcClient("grpc.trongrid.io:50051")
+	conn := client.New("grpc.trongrid.io:50051")
 	err := conn.Start(grpc.WithInsecure())
 	require.Nil(t, err)
 

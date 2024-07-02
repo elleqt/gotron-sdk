@@ -12,7 +12,7 @@ import (
 )
 
 // ExchangeList of bancor TRC10, use page -1 to list all
-func (g *GrpcClient) ExchangeList(ctx context.Context, page int64, limit ...int) (*api.ExchangeList, error) {
+func (g *Client) ExchangeList(ctx context.Context, page int64, limit ...int) (*api.ExchangeList, error) {
 	if page == -1 {
 		return g.Client.ListExchanges(ctx, new(api.EmptyMessage))
 	}
@@ -25,7 +25,7 @@ func (g *GrpcClient) ExchangeList(ctx context.Context, page int64, limit ...int)
 }
 
 // ExchangeByID returns exchangeDetails
-func (g *GrpcClient) ExchangeByID(ctx context.Context, id int64) (*core.Exchange, error) {
+func (g *Client) ExchangeByID(ctx context.Context, id int64) (*core.Exchange, error) {
 	bID := make([]byte, 8)
 	binary.BigEndian.PutUint64(bID, uint64(id))
 
@@ -40,7 +40,7 @@ func (g *GrpcClient) ExchangeByID(ctx context.Context, id int64) (*core.Exchange
 }
 
 // ExchangeCreate from two tokens (TRC10/TRX) only
-func (g *GrpcClient) ExchangeCreate(ctx context.Context,
+func (g *Client) ExchangeCreate(ctx context.Context,
 	from string,
 	tokenID1 string,
 	amountToken1 int64,
@@ -73,7 +73,7 @@ func (g *GrpcClient) ExchangeCreate(ctx context.Context,
 }
 
 // ExchangeInject both tokens into banco pair (the second token is taken info transaction process)
-func (g *GrpcClient) ExchangeInject(ctx context.Context,
+func (g *Client) ExchangeInject(ctx context.Context,
 	from string,
 	exchangeID int64,
 	tokenID string,
@@ -104,7 +104,7 @@ func (g *GrpcClient) ExchangeInject(ctx context.Context,
 }
 
 // ExchangeWithdraw both tokens into banco pair (the second token is taken info transaction process)
-func (g *GrpcClient) ExchangeWithdraw(ctx context.Context,
+func (g *Client) ExchangeWithdraw(ctx context.Context,
 	from string,
 	exchangeID int64,
 	tokenID string,
@@ -135,7 +135,7 @@ func (g *GrpcClient) ExchangeWithdraw(ctx context.Context,
 }
 
 // ExchangeTrade on bancor TRC10
-func (g *GrpcClient) ExchangeTrade(ctx context.Context,
+func (g *Client) ExchangeTrade(ctx context.Context,
 	from string,
 	exchangeID int64,
 	tokenID string,

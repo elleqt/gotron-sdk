@@ -16,7 +16,7 @@ import (
 )
 
 // GetAccount from BASE58 address
-func (g *GrpcClient) GetAccount(ctx context.Context, addr string) (*core.Account, error) {
+func (g *Client) GetAccount(ctx context.Context, addr string) (*core.Account, error) {
 	account := new(core.Account)
 	var err error
 
@@ -36,7 +36,7 @@ func (g *GrpcClient) GetAccount(ctx context.Context, addr string) (*core.Account
 }
 
 // GetRewardsInfo from BASE58 address
-func (g *GrpcClient) GetRewardsInfo(ctx context.Context, addr string) (int64, error) {
+func (g *Client) GetRewardsInfo(ctx context.Context, addr string) (int64, error) {
 	addrBytes, err := common.DecodeCheck(addr)
 	if err != nil {
 		return 0, err
@@ -50,7 +50,7 @@ func (g *GrpcClient) GetRewardsInfo(ctx context.Context, addr string) (int64, er
 }
 
 // GetAccountNet return account resources from BASE58 address
-func (g *GrpcClient) GetAccountNet(ctx context.Context, addr string) (*api.AccountNetMessage, error) {
+func (g *Client) GetAccountNet(ctx context.Context, addr string) (*api.AccountNetMessage, error) {
 	account := new(core.Account)
 	var err error
 
@@ -63,7 +63,7 @@ func (g *GrpcClient) GetAccountNet(ctx context.Context, addr string) (*api.Accou
 }
 
 // CreateAccount activate tron account
-func (g *GrpcClient) CreateAccount(ctx context.Context, from, addr string) (*api.TransactionExtention, error) {
+func (g *Client) CreateAccount(ctx context.Context, from, addr string) (*api.TransactionExtention, error) {
 	var err error
 
 	contract := &core.AccountCreateContract{}
@@ -88,7 +88,7 @@ func (g *GrpcClient) CreateAccount(ctx context.Context, from, addr string) (*api
 }
 
 // UpdateAccount change account name
-func (g *GrpcClient) UpdateAccount(ctx context.Context, from, accountName string) (*api.TransactionExtention, error) {
+func (g *Client) UpdateAccount(ctx context.Context, from, accountName string) (*api.TransactionExtention, error) {
 	var err error
 	contract := &core.AccountUpdateContract{}
 	contract.AccountName = []byte(accountName)
@@ -110,7 +110,7 @@ func (g *GrpcClient) UpdateAccount(ctx context.Context, from, accountName string
 }
 
 // GetAccountDetailed from BASE58 address
-func (g *GrpcClient) GetAccountDetailed(ctx context.Context, addr string) (*account.Account, error) {
+func (g *Client) GetAccountDetailed(ctx context.Context, addr string) (*account.Account, error) {
 
 	acc, err := g.GetAccount(ctx, addr)
 	if err != nil {
@@ -294,7 +294,7 @@ func (g *GrpcClient) GetAccountDetailed(ctx context.Context, addr string) (*acco
 }
 
 // WithdrawBalance rewards from account
-func (g *GrpcClient) WithdrawBalance(ctx context.Context, from string) (*api.TransactionExtention, error) {
+func (g *Client) WithdrawBalance(ctx context.Context, from string) (*api.TransactionExtention, error) {
 	var err error
 	contract := &core.WithdrawBalanceContract{}
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
@@ -374,7 +374,7 @@ func makePermission(name string, pType core.Permission_PermissionType, id int32,
 }
 
 // UpdateAccountPermission change account permission
-func (g *GrpcClient) UpdateAccountPermission(ctx context.Context, from string, owner, witness map[string]interface{}, actives []map[string]interface{}) (*api.TransactionExtention, error) {
+func (g *Client) UpdateAccountPermission(ctx context.Context, from string, owner, witness map[string]interface{}, actives []map[string]interface{}) (*api.TransactionExtention, error) {
 
 	if len(actives) > 8 {
 		return nil, fmt.Errorf("cant have more than 8 active operations")

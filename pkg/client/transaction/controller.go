@@ -31,7 +31,7 @@ type sender struct {
 type Controller struct {
 	executionError error
 	resultError    error
-	client         *client.GrpcClient
+	client         *client.Client
 	tx             *core.Transaction
 	sender         sender
 	Behavior       behavior
@@ -47,7 +47,7 @@ type behavior struct {
 
 // NewController initializes a Controller, caller can control behavior via options
 func NewController(
-	client *client.GrpcClient,
+	client *client.Client,
 	senderKs *keystore.KeyStore,
 	senderAcct *keystore.Account,
 	tx *core.Transaction,

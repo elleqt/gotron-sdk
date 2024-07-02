@@ -11,12 +11,12 @@ import (
 )
 
 // ListWitnesses return all witnesses
-func (g *GrpcClient) ListWitnesses(ctx context.Context) (*api.WitnessList, error) {
+func (g *Client) ListWitnesses(ctx context.Context) (*api.WitnessList, error) {
 	return g.Client.ListWitnesses(ctx, new(api.EmptyMessage))
 }
 
 // CreateWitness upgrade account to network witness
-func (g *GrpcClient) CreateWitness(ctx context.Context, from, urlStr string) (*api.TransactionExtention, error) {
+func (g *Client) CreateWitness(ctx context.Context, from, urlStr string) (*api.TransactionExtention, error) {
 	var err error
 
 	contract := &core.WitnessCreateContract{
@@ -40,7 +40,7 @@ func (g *GrpcClient) CreateWitness(ctx context.Context, from, urlStr string) (*a
 }
 
 // UpdateWitness change URL info
-func (g *GrpcClient) UpdateWitness(ctx context.Context, from, urlStr string) (*api.TransactionExtention, error) {
+func (g *Client) UpdateWitness(ctx context.Context, from, urlStr string) (*api.TransactionExtention, error) {
 	var err error
 
 	contract := &core.WitnessUpdateContract{}
@@ -63,7 +63,7 @@ func (g *GrpcClient) UpdateWitness(ctx context.Context, from, urlStr string) (*a
 }
 
 // VoteWitnessAccount change account vote
-func (g *GrpcClient) VoteWitnessAccount(ctx context.Context, from string,
+func (g *Client) VoteWitnessAccount(ctx context.Context, from string,
 	witnessMap map[string]int64) (*api.TransactionExtention, error) {
 	var err error
 
@@ -99,7 +99,7 @@ func (g *GrpcClient) VoteWitnessAccount(ctx context.Context, from string,
 }
 
 // GetWitnessBrokerage from witness address
-func (g *GrpcClient) GetWitnessBrokerage(ctx context.Context, witness string) (float64, error) {
+func (g *Client) GetWitnessBrokerage(ctx context.Context, witness string) (float64, error) {
 	addr, err := common.DecodeCheck(witness)
 	if err != nil {
 		return 0, err
@@ -113,7 +113,7 @@ func (g *GrpcClient) GetWitnessBrokerage(ctx context.Context, witness string) (f
 }
 
 // UpdateBrokerage change SR comission fees
-func (g *GrpcClient) UpdateBrokerage(ctx context.Context, from string, comission int32) (*api.TransactionExtention, error) {
+func (g *Client) UpdateBrokerage(ctx context.Context, from string, comission int32) (*api.TransactionExtention, error) {
 	var err error
 
 	contract := &core.UpdateBrokerageContract{

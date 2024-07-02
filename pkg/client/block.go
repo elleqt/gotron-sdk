@@ -11,7 +11,7 @@ import (
 )
 
 // GetNowBlock return TIP block
-func (g *GrpcClient) GetNowBlock(ctx context.Context) (*api.BlockExtention, error) {
+func (g *Client) GetNowBlock(ctx context.Context) (*api.BlockExtention, error) {
 	result, err := g.Client.GetNowBlock2(ctx, new(api.EmptyMessage))
 
 	if err != nil {
@@ -22,7 +22,7 @@ func (g *GrpcClient) GetNowBlock(ctx context.Context) (*api.BlockExtention, erro
 }
 
 // GetBlockByNum block from number
-func (g *GrpcClient) GetBlockByNum(ctx context.Context, num int64) (*api.BlockExtention, error) {
+func (g *Client) GetBlockByNum(ctx context.Context, num int64) (*api.BlockExtention, error) {
 	numMessage := new(api.NumberMessage)
 	numMessage.Num = num
 
@@ -37,7 +37,7 @@ func (g *GrpcClient) GetBlockByNum(ctx context.Context, num int64) (*api.BlockEx
 }
 
 // GetBlockInfoByNum block from number
-func (g *GrpcClient) GetBlockInfoByNum(ctx context.Context, num int64) (*api.TransactionInfoList, error) {
+func (g *Client) GetBlockInfoByNum(ctx context.Context, num int64) (*api.TransactionInfoList, error) {
 	numMessage := new(api.NumberMessage)
 	numMessage.Num = num
 
@@ -53,7 +53,7 @@ func (g *GrpcClient) GetBlockInfoByNum(ctx context.Context, num int64) (*api.Tra
 }
 
 // GetBlockByID block from hash
-func (g *GrpcClient) GetBlockByID(ctx context.Context, id string) (*core.Block, error) {
+func (g *Client) GetBlockByID(ctx context.Context, id string) (*core.Block, error) {
 	blockID := new(api.BytesMessage)
 	var err error
 
@@ -67,7 +67,7 @@ func (g *GrpcClient) GetBlockByID(ctx context.Context, id string) (*core.Block, 
 }
 
 // GetBlockByLimitNext return list of block start/end
-func (g *GrpcClient) GetBlockByLimitNext(ctx context.Context, start, end int64) (*api.BlockListExtention, error) {
+func (g *Client) GetBlockByLimitNext(ctx context.Context, start, end int64) (*api.BlockListExtention, error) {
 	blockLimit := new(api.BlockLimit)
 	blockLimit.StartNum = start
 	blockLimit.EndNum = end
@@ -77,7 +77,7 @@ func (g *GrpcClient) GetBlockByLimitNext(ctx context.Context, start, end int64) 
 }
 
 // GetBlockByLatestNum return block list till num
-func (g *GrpcClient) GetBlockByLatestNum(ctx context.Context, num int64) (*api.BlockListExtention, error) {
+func (g *Client) GetBlockByLatestNum(ctx context.Context, num int64) (*api.BlockListExtention, error) {
 	numMessage := new(api.NumberMessage)
 	numMessage.Num = num
 

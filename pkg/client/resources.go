@@ -9,7 +9,7 @@ import (
 )
 
 // GetAccountResource from BASE58 address
-func (g *GrpcClient) GetAccountResource(ctx context.Context, addr string) (*api.AccountResourceMessage, error) {
+func (g *Client) GetAccountResource(ctx context.Context, addr string) (*api.AccountResourceMessage, error) {
 	account := new(core.Account)
 	var err error
 
@@ -22,7 +22,7 @@ func (g *GrpcClient) GetAccountResource(ctx context.Context, addr string) (*api.
 }
 
 // GetDelegatedResources from BASE58 address
-func (g *GrpcClient) GetDelegatedResources(ctx context.Context, address string) ([]*api.DelegatedResourceList, error) {
+func (g *Client) GetDelegatedResources(ctx context.Context, address string) ([]*api.DelegatedResourceList, error) {
 	addrBytes, err := common.DecodeCheck(address)
 	if err != nil {
 		return nil, err
@@ -49,7 +49,7 @@ func (g *GrpcClient) GetDelegatedResources(ctx context.Context, address string) 
 }
 
 // GetDelegatedResourcesV2 from BASE58 address
-func (g *GrpcClient) GetDelegatedResourcesV2(ctx context.Context, address string) ([]*api.DelegatedResourceList, error) {
+func (g *Client) GetDelegatedResourcesV2(ctx context.Context, address string) ([]*api.DelegatedResourceList, error) {
 	addrBytes, err := common.DecodeCheck(address)
 	if err != nil {
 		return nil, err
@@ -77,7 +77,7 @@ func (g *GrpcClient) GetDelegatedResourcesV2(ctx context.Context, address string
 }
 
 // GetCanDelegatedMaxSize from BASE58 address
-func (g *GrpcClient) GetCanDelegatedMaxSize(ctx context.Context, address string, resource int32) (*api.CanDelegatedMaxSizeResponseMessage, error) {
+func (g *Client) GetCanDelegatedMaxSize(ctx context.Context, address string, resource int32) (*api.CanDelegatedMaxSizeResponseMessage, error) {
 	addrBytes, err := common.DecodeCheck(address)
 	if err != nil {
 		return nil, err
@@ -98,7 +98,7 @@ func (g *GrpcClient) GetCanDelegatedMaxSize(ctx context.Context, address string,
 }
 
 // DelegateResource from BASE58 address
-func (g *GrpcClient) DelegateResource(ctx context.Context, from, to string, resource core.ResourceCode, delegateBalance int64, lock bool, lockPeriod int64) (*api.TransactionExtention, error) {
+func (g *Client) DelegateResource(ctx context.Context, from, to string, resource core.ResourceCode, delegateBalance int64, lock bool, lockPeriod int64) (*api.TransactionExtention, error) {
 	addrFromBytes, err := common.DecodeCheck(from)
 	if err != nil {
 		return nil, err
@@ -128,7 +128,7 @@ func (g *GrpcClient) DelegateResource(ctx context.Context, from, to string, reso
 }
 
 // UnDelegateResource from BASE58 address
-func (g *GrpcClient) UnDelegateResource(ctx context.Context, owner, receiver string, resource core.ResourceCode, delegateBalance int64, lock bool) (*api.TransactionExtention, error) {
+func (g *Client) UnDelegateResource(ctx context.Context, owner, receiver string, resource core.ResourceCode, delegateBalance int64, lock bool) (*api.TransactionExtention, error) {
 	addrOwnerBytes, err := common.DecodeCheck(owner)
 	if err != nil {
 		return nil, err
