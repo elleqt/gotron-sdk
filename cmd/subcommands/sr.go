@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -19,12 +20,14 @@ var (
 )
 
 func srSub() []*cobra.Command {
+	ctx := context.Background()
+
 	cmdList := &cobra.Command{
 		Use:   "list",
 		Short: "List network witnesses",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			list, err := conn.ListWitnesses()
+			list, err := conn.ListWitnesses(ctx)
 			if err != nil {
 				return err
 			}
@@ -60,7 +63,7 @@ func srSub() []*cobra.Command {
 					if data["address"].(string) == "TKSXDA8HfE9E1y39RczVQ1ZascUEtaSToF" {
 						distType = "directly to wallet"
 					} else {
-						value, err = conn.GetWitnessBrokerage(data["address"].(string))
+						value, err = conn.GetWitnessBrokerage(ctx, data["address"].(string))
 						if err != nil {
 							return fmt.Errorf("fetching brokerage from %s", data["address"])
 						}
@@ -90,7 +93,7 @@ func srSub() []*cobra.Command {
 			if signerAddress.String() == "" {
 				return fmt.Errorf("no signer specified")
 			}
-			tx, err := conn.CreateWitness(signerAddress.String(), args[0])
+			tx, err := conn.CreateWitness(ctx, signerAddress.String(), args[0])
 			if err != nil {
 				return err
 			}
@@ -106,7 +109,7 @@ func srSub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 
@@ -147,7 +150,7 @@ func srSub() []*cobra.Command {
 			if value < 0 || value > 100 {
 				return fmt.Errorf("Invalud Brokerage rande 0 > X < 100")
 			}
-			tx, err := conn.UpdateBrokerage(signerAddress.String(), int32(value))
+			tx, err := conn.UpdateBrokerage(ctx, signerAddress.String(), int32(value))
 			if err != nil {
 				return err
 			}
@@ -163,7 +166,7 @@ func srSub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 

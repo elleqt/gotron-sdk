@@ -1,13 +1,15 @@
 package client
 
 import (
+	"context"
+
 	"github.com/elleqt/gotron-sdk/pkg/common"
 	"github.com/elleqt/gotron-sdk/pkg/proto/api"
 	"github.com/elleqt/gotron-sdk/pkg/proto/core"
 )
 
 // GetAccountResource from BASE58 address
-func (g *GrpcClient) GetAccountResource(addr string) (*api.AccountResourceMessage, error) {
+func (g *GrpcClient) GetAccountResource(ctx context.Context, addr string) (*api.AccountResourceMessage, error) {
 	account := new(core.Account)
 	var err error
 
@@ -16,20 +18,15 @@ func (g *GrpcClient) GetAccountResource(addr string) (*api.AccountResourceMessag
 		return nil, err
 	}
 
-	ctx, cancel := g.getContext()
-	defer cancel()
-
 	return g.Client.GetAccountResource(ctx, account)
 }
 
 // GetDelegatedResources from BASE58 address
-func (g *GrpcClient) GetDelegatedResources(address string) ([]*api.DelegatedResourceList, error) {
+func (g *GrpcClient) GetDelegatedResources(ctx context.Context, address string) ([]*api.DelegatedResourceList, error) {
 	addrBytes, err := common.DecodeCheck(address)
 	if err != nil {
 		return nil, err
 	}
-	ctx, cancel := g.getContext()
-	defer cancel()
 
 	ai, err := g.Client.GetDelegatedResourceAccountIndex(ctx, GetMessageBytes(addrBytes))
 	if err != nil {
@@ -52,13 +49,11 @@ func (g *GrpcClient) GetDelegatedResources(address string) ([]*api.DelegatedReso
 }
 
 // GetDelegatedResourcesV2 from BASE58 address
-func (g *GrpcClient) GetDelegatedResourcesV2(address string) ([]*api.DelegatedResourceList, error) {
+func (g *GrpcClient) GetDelegatedResourcesV2(ctx context.Context, address string) ([]*api.DelegatedResourceList, error) {
 	addrBytes, err := common.DecodeCheck(address)
 	if err != nil {
 		return nil, err
 	}
-	ctx, cancel := g.getContext()
-	defer cancel()
 
 	ai, err := g.Client.GetDelegatedResourceAccountIndexV2(ctx, GetMessageBytes(addrBytes))
 	if err != nil {
@@ -82,13 +77,11 @@ func (g *GrpcClient) GetDelegatedResourcesV2(address string) ([]*api.DelegatedRe
 }
 
 // GetCanDelegatedMaxSize from BASE58 address
-func (g *GrpcClient) GetCanDelegatedMaxSize(address string, resource int32) (*api.CanDelegatedMaxSizeResponseMessage, error) {
+func (g *GrpcClient) GetCanDelegatedMaxSize(ctx context.Context, address string, resource int32) (*api.CanDelegatedMaxSizeResponseMessage, error) {
 	addrBytes, err := common.DecodeCheck(address)
 	if err != nil {
 		return nil, err
 	}
-	ctx, cancel := g.getContext()
-	defer cancel()
 
 	dm := &api.CanDelegatedMaxSizeRequestMessage{}
 
@@ -105,7 +98,7 @@ func (g *GrpcClient) GetCanDelegatedMaxSize(address string, resource int32) (*ap
 }
 
 // DelegateResource from BASE58 address
-func (g *GrpcClient) DelegateResource(from, to string, resource core.ResourceCode, delegateBalance int64, lock bool, lockPeriod int64) (*api.TransactionExtention, error) {
+func (g *GrpcClient) DelegateResource(ctx context.Context, from, to string, resource core.ResourceCode, delegateBalance int64, lock bool, lockPeriod int64) (*api.TransactionExtention, error) {
 	addrFromBytes, err := common.DecodeCheck(from)
 	if err != nil {
 		return nil, err
@@ -115,9 +108,6 @@ func (g *GrpcClient) DelegateResource(from, to string, resource core.ResourceCod
 	if err != nil {
 		return nil, err
 	}
-
-	ctx, cancel := g.getContext()
-	defer cancel()
 
 	contract := &core.DelegateResourceContract{}
 
@@ -138,7 +128,7 @@ func (g *GrpcClient) DelegateResource(from, to string, resource core.ResourceCod
 }
 
 // UnDelegateResource from BASE58 address
-func (g *GrpcClient) UnDelegateResource(owner, receiver string, resource core.ResourceCode, delegateBalance int64, lock bool) (*api.TransactionExtention, error) {
+func (g *GrpcClient) UnDelegateResource(ctx context.Context, owner, receiver string, resource core.ResourceCode, delegateBalance int64, lock bool) (*api.TransactionExtention, error) {
 	addrOwnerBytes, err := common.DecodeCheck(owner)
 	if err != nil {
 		return nil, err
@@ -148,9 +138,6 @@ func (g *GrpcClient) UnDelegateResource(owner, receiver string, resource core.Re
 	if err != nil {
 		return nil, err
 	}
-
-	ctx, cancel := g.getContext()
-	defer cancel()
 
 	contract := &core.UnDelegateResourceContract{}
 

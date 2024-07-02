@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"math"
@@ -20,6 +21,8 @@ var (
 )
 
 func exchangeSub() []*cobra.Command {
+	ctx := context.Background()
+
 	cmdCreate := &cobra.Command{
 		Use:   "create <TOKEN1> <AMOUNT1> <TOKEN2> <AMOUNT2>",
 		Short: "Create bancor exchange for a token pair",
@@ -60,21 +63,21 @@ func exchangeSub() []*cobra.Command {
 			// Get asset information
 			// check if possible id
 			if tokenID1 != "_" {
-				if asset, err := conn.GetAssetIssueByID(tokenID1); err == nil {
+				if asset, err := conn.GetAssetIssueByID(ctx, tokenID1); err == nil {
 					tokenValue1 = tokenValue1 * math.Pow10(int(asset.Precision))
 				} else {
 					return fmt.Errorf("TRC10 not found: %s", tokenID1)
 				}
 			}
 			if tokenID2 != "_" {
-				if asset, err := conn.GetAssetIssueByID(tokenID2); err == nil {
+				if asset, err := conn.GetAssetIssueByID(ctx, tokenID2); err == nil {
 					tokenValue2 = tokenValue2 * math.Pow10(int(asset.Precision))
 				} else {
 					return fmt.Errorf("TRC10 not found: %s", tokenID2)
 				}
 			}
 
-			tx, err := conn.ExchangeCreate(
+			tx, err := conn.ExchangeCreate(ctx,
 				signerAddress.String(),
 				tokenID1,
 				int64(tokenValue1),
@@ -96,7 +99,7 @@ func exchangeSub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 
@@ -152,14 +155,14 @@ func exchangeSub() []*cobra.Command {
 			// Get asset information
 			// check if possible id
 			if tokenID1 != "_" {
-				if asset, err := conn.GetAssetIssueByID(tokenID1); err == nil {
+				if asset, err := conn.GetAssetIssueByID(ctx, tokenID1); err == nil {
 					tokenValue1 = tokenValue1 * math.Pow10(int(asset.Precision))
 				} else {
 					return fmt.Errorf("TRC10 not found: %s", tokenID1)
 				}
 			}
 
-			tx, err := conn.ExchangeInject(
+			tx, err := conn.ExchangeInject(ctx,
 				signerAddress.String(),
 				exchangeID,
 				tokenID1,
@@ -180,7 +183,7 @@ func exchangeSub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 
@@ -238,14 +241,14 @@ func exchangeSub() []*cobra.Command {
 			// Get asset information
 			// check if possible id
 			if tokenID1 != "_" {
-				if asset, err := conn.GetAssetIssueByID(tokenID1); err == nil {
+				if asset, err := conn.GetAssetIssueByID(ctx, tokenID1); err == nil {
 					tokenValue1 = tokenValue1 * math.Pow10(int(asset.Precision))
 				} else {
 					return fmt.Errorf("TRC10 not found: %s", tokenID1)
 				}
 			}
 
-			tx, err := conn.ExchangeWithdraw(
+			tx, err := conn.ExchangeWithdraw(ctx,
 				signerAddress.String(),
 				exchangeID,
 				tokenID1,
@@ -266,7 +269,7 @@ func exchangeSub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 
@@ -299,7 +302,7 @@ func exchangeSub() []*cobra.Command {
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			list, err := conn.ExchangeList(-1)
+			list, err := conn.ExchangeList(ctx, -1)
 			if err != nil {
 				return err
 			}
@@ -362,7 +365,7 @@ func exchangeSub() []*cobra.Command {
 			// Get asset information
 			// check if possible id
 			if tokenID1 != "_" {
-				if asset, err := conn.GetAssetIssueByID(tokenID1); err == nil {
+				if asset, err := conn.GetAssetIssueByID(ctx, tokenID1); err == nil {
 					tokenValue1 = tokenValue1 * math.Pow10(int(asset.Precision))
 				} else {
 					return fmt.Errorf("TRC10 not found: %s", tokenID1)
@@ -370,7 +373,7 @@ func exchangeSub() []*cobra.Command {
 			}
 
 			// compute expected amount
-			if e, err := conn.ExchangeByID(exchangeID); err == nil {
+			if e, err := conn.ExchangeByID(ctx, exchangeID); err == nil {
 				tokenDecimal := 6
 				T1 := string(e.FirstTokenId)
 				T2 := string(e.SecondTokenId)
@@ -379,7 +382,7 @@ func exchangeSub() []*cobra.Command {
 				case T1:
 					if T2 != "_" {
 						// get other token decimals
-						if asset, err := conn.GetAssetIssueByID(T2); err == nil {
+						if asset, err := conn.GetAssetIssueByID(ctx, T2); err == nil {
 							tokenDecimal = int(asset.Precision)
 						}
 					}
@@ -387,7 +390,7 @@ func exchangeSub() []*cobra.Command {
 				case T2:
 					if T1 != "_" {
 						// get other token decimals
-						if asset, err := conn.GetAssetIssueByID(T1); err == nil {
+						if asset, err := conn.GetAssetIssueByID(ctx, T1); err == nil {
 							tokenDecimal = int(asset.Precision)
 						}
 					}
@@ -404,7 +407,7 @@ func exchangeSub() []*cobra.Command {
 				return fmt.Errorf("Cannot fetch echange info: %+v", err)
 			}
 
-			tx, err := conn.ExchangeTrade(
+			tx, err := conn.ExchangeTrade(ctx,
 				signerAddress.String(),
 				exchangeID,
 				tokenID1,
@@ -426,7 +429,7 @@ func exchangeSub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 

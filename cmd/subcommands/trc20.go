@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"math/big"
@@ -15,6 +16,8 @@ import (
 )
 
 func trc20Sub() []*cobra.Command {
+	ctx := context.Background()
+
 	cmdSend := &cobra.Command{
 		Use:     "send <ADDRESS_TO> <AMOUNT> <CONTRACT_ADDRESS> ",
 		Short:   "send TRC20 tokens to an address",
@@ -36,13 +39,13 @@ func trc20Sub() []*cobra.Command {
 				return err
 			}
 			// get contract decimals if any
-			tokenDecimals, err := conn.TRC20GetDecimals(contract.String())
+			tokenDecimals, err := conn.TRC20GetDecimals(ctx, contract.String())
 			if err != nil {
 				tokenDecimals = big.NewInt(0)
 			}
 
 			amount, _ := decimals.ApplyDecimals(value, tokenDecimals.Int64())
-			tx, err := conn.TRC20Send(signerAddress.String(), addr.String(), contract.String(), amount, feeLimit)
+			tx, err := conn.TRC20Send(ctx, signerAddress.String(), addr.String(), contract.String(), amount, feeLimit)
 			if err != nil {
 				return err
 			}
@@ -58,7 +61,7 @@ func trc20Sub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 
@@ -105,18 +108,18 @@ func trc20Sub() []*cobra.Command {
 			}
 
 			// get contract decimals if any
-			tokenDecimals, err := conn.TRC20GetDecimals(contract.String())
+			tokenDecimals, err := conn.TRC20GetDecimals(ctx, contract.String())
 			if err != nil {
 				tokenDecimals = big.NewInt(0)
 			}
 
 			// get contract decimals if any
-			symbol, err := conn.TRC20GetSymbol(contract.String())
+			symbol, err := conn.TRC20GetSymbol(ctx, contract.String())
 			if err != nil {
 				symbol = ""
 			}
 
-			value, err := conn.TRC20ContractBalance(addr.String(), contract.String())
+			value, err := conn.TRC20ContractBalance(ctx, addr.String(), contract.String())
 			if err != nil {
 				return err
 			}

@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	"context"
 	"crypto/sha256"
 	"errors"
 	"fmt"
@@ -121,7 +122,7 @@ func (C *Controller) TransactionHash() (string, error) {
 	return common.ToHex(hash), nil
 }
 
-func (C *Controller) txConfirmation() {
+func (C *Controller) txConfirmation(ctx context.Context) {
 	if C.executionError != nil || C.Behavior.DryRun {
 		return
 	}
@@ -135,7 +136,7 @@ func (C *Controller) txConfirmation() {
 		start := int(C.Behavior.ConfirmationWaitTime)
 		for {
 			// GETTX by ID
-			if txi, err := C.client.GetTransactionInfoByID(txHash); err == nil {
+			if txi, err := C.client.GetTransactionInfoByID(ctx, txHash); err == nil {
 				// check receipt
 				if txi.Result != 0 {
 					C.resultError = fmt.Errorf("%s", txi.ResMessage)
@@ -166,15 +167,15 @@ func (C *Controller) GetResultError() error {
 // ExecuteTransaction is the single entrypoint to execute a plain transaction.
 // Each step in transaction creation, execution probably includes a mutation
 // Each becomes a no-op if executionError occurred in any previous step
-func (C *Controller) ExecuteTransaction() error {
+func (C *Controller) ExecuteTransaction(ctx context.Context) error {
 	switch C.Behavior.SigningImpl {
 	case Software:
 		C.signTxForSending()
 	case Ledger:
 		C.hardwareSignTxForSending()
 	}
-	C.sendSignedTx()
-	C.txConfirmation()
+	C.sendSignedTx(ctx)
+	C.txConfirmation(ctx)
 	return C.executionError
 }
 
@@ -183,11 +184,11 @@ func (C *Controller) GetRawData() ([]byte, error) {
 	return proto.Marshal(C.tx.GetRawData())
 }
 
-func (C *Controller) sendSignedTx() {
+func (C *Controller) sendSignedTx(ctx context.Context) {
 	if C.executionError != nil || C.Behavior.DryRun {
 		return
 	}
-	result, err := C.client.Broadcast(C.tx)
+	result, err := C.client.Broadcast(ctx, C.tx)
 	if err != nil {
 		C.executionError = err
 		return

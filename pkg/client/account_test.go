@@ -1,6 +1,7 @@
 package client_test
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -38,13 +39,13 @@ func TestMain(m *testing.M) {
 }
 
 func TestGetAccountDetailed(t *testing.T) {
-	acc, err := conn.GetAccountDetailed(accountAddress)
+	acc, err := conn.GetAccountDetailed(context.Background(), accountAddress)
 	require.Nil(t, err)
 	require.NotNil(t, acc.Allowance)
 	require.NotNil(t, acc.Rewards)
 
 	t.Skip()
-	acc2, err := conn.GetAccountDetailed(accountAddressWitness)
+	acc2, err := conn.GetAccountDetailed(context.Background(), accountAddressWitness)
 	require.Nil(t, err)
 	require.NotNil(t, acc2.Allowance)
 	require.NotNil(t, acc2.Rewards)
@@ -52,7 +53,7 @@ func TestGetAccountDetailed(t *testing.T) {
 }
 
 func TestGetAccountDetailedV2(t *testing.T) {
-	acc, err := conn.GetAccountDetailed(testnetNileAddressExample)
+	acc, err := conn.GetAccountDetailed(context.Background(), testnetNileAddressExample)
 
 	require.Nil(t, err)
 	require.NotNil(t, acc.Allowance)
@@ -65,7 +66,7 @@ func TestGetAccountDetailedV2(t *testing.T) {
 
 func TestFreezeV2(t *testing.T) {
 	t.Skip() // Only in testnet nile
-	freezeTx, err := conn.FreezeBalanceV2(testnetNileAddressExample, core.ResourceCode_BANDWIDTH, 1000000)
+	freezeTx, err := conn.FreezeBalanceV2(context.Background(), testnetNileAddressExample, core.ResourceCode_BANDWIDTH, 1000000)
 
 	require.Nil(t, err)
 	require.NotNil(t, freezeTx.GetTxid())
@@ -74,7 +75,7 @@ func TestFreezeV2(t *testing.T) {
 
 func TestUnfreezeV2(t *testing.T) {
 	t.Skip() // Only in testnet nile
-	unfreezeTx, err := conn.UnfreezeBalanceV2(testnetNileAddressExample, core.ResourceCode_BANDWIDTH, 1000000)
+	unfreezeTx, err := conn.UnfreezeBalanceV2(context.Background(), testnetNileAddressExample, core.ResourceCode_BANDWIDTH, 1000000)
 
 	require.Nil(t, err)
 	require.NotNil(t, unfreezeTx.GetTxid())
@@ -83,7 +84,7 @@ func TestUnfreezeV2(t *testing.T) {
 
 func TestDelegate(t *testing.T) {
 	t.Skip() // Only in testnet nile
-	tx, err := conn.DelegateResource(testnetNileAddressExample, testnetNileAddressDelegateExample, core.ResourceCode_BANDWIDTH, 1000000, false, 10000)
+	tx, err := conn.DelegateResource(context.Background(), testnetNileAddressExample, testnetNileAddressDelegateExample, core.ResourceCode_BANDWIDTH, 1000000, false, 10000)
 
 	require.Nil(t, err)
 	require.NotNil(t, tx.GetTxid())
@@ -91,7 +92,7 @@ func TestDelegate(t *testing.T) {
 
 func TestUndelegate(t *testing.T) {
 	t.Skip() // Only in testnet nile
-	tx, err := conn.UnDelegateResource(testnetNileAddressExample, testnetNileAddressDelegateExample, core.ResourceCode_BANDWIDTH, 1000000, false)
+	tx, err := conn.UnDelegateResource(context.Background(), testnetNileAddressExample, testnetNileAddressDelegateExample, core.ResourceCode_BANDWIDTH, 1000000, false)
 
 	require.Nil(t, err)
 	require.NotNil(t, tx.GetTxid())
@@ -99,7 +100,7 @@ func TestUndelegate(t *testing.T) {
 
 func TestDelegateMaxSize(t *testing.T) {
 	t.Skip() // Only in testnet nile
-	tx, err := conn.GetCanDelegatedMaxSize(testnetNileAddressExample, int32(core.ResourceCode_BANDWIDTH.Number()))
+	tx, err := conn.GetCanDelegatedMaxSize(context.Background(), testnetNileAddressExample, int32(core.ResourceCode_BANDWIDTH.Number()))
 
 	require.Nil(t, err)
 	require.GreaterOrEqual(t, tx.GetMaxSize(), int64(0))
@@ -107,7 +108,7 @@ func TestDelegateMaxSize(t *testing.T) {
 
 func TestUnfreezeLeftCount(t *testing.T) {
 	t.Skip() // Only in testnet nile
-	tx, err := conn.GetAvailableUnfreezeCount(testnetNileAddressExample)
+	tx, err := conn.GetAvailableUnfreezeCount(context.Background(), testnetNileAddressExample)
 
 	require.Nil(t, err)
 	require.GreaterOrEqual(t, tx.GetCount(), int64(0))

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -31,6 +32,8 @@ var (
 )
 
 func contractSub() []*cobra.Command {
+	ctx := context.Background()
+
 	cmdDeploy := &cobra.Command{
 		Use:   "deploy <CONTRACT_NAME>",
 		Short: "deploy smart contract",
@@ -70,7 +73,7 @@ func contractSub() []*cobra.Command {
 			}
 
 			// TODO: add constructor arguments
-			tx, err := conn.DeployContract(signerAddress.String(), args[0],
+			tx, err := conn.DeployContract(ctx, signerAddress.String(), args[0],
 				ABI, bcSTR, feeLimit, curPercent, oeLimit)
 			if err != nil {
 				return err
@@ -87,7 +90,7 @@ func contractSub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 
@@ -146,7 +149,7 @@ func contractSub() []*cobra.Command {
 				param = args[2]
 			}
 
-			tx, err := conn.TriggerConstantContract(
+			tx, err := conn.TriggerConstantContract(ctx,
 				signerAddress.String(),
 				addr.String(),
 				args[1],
@@ -191,7 +194,7 @@ func contractSub() []*cobra.Command {
 			tokenInt := int64(0)
 			if tTokenAmount > 0 {
 				// get token info
-				info, err := conn.GetAssetIssueByID(tTokenID)
+				info, err := conn.GetAssetIssueByID(ctx, tTokenID)
 				if err != nil {
 					return err
 				}
@@ -204,7 +207,7 @@ func contractSub() []*cobra.Command {
 			}
 
 			if estimate {
-				estimate, err := conn.EstimateEnergy(
+				estimate, err := conn.EstimateEnergy(ctx,
 					signerAddress.String(),
 					addr.String(),
 					args[1],
@@ -235,7 +238,7 @@ func contractSub() []*cobra.Command {
 				fmt.Println(common.JSONPrettyFormat(string(asJSON)))
 			}
 
-			tx, err := conn.TriggerContract(
+			tx, err := conn.TriggerContract(ctx,
 				signerAddress.String(),
 				addr.String(),
 				args[1],
@@ -260,7 +263,7 @@ func contractSub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 

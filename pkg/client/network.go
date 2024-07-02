@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 
 	"github.com/elleqt/gotron-sdk/pkg/common"
@@ -12,10 +13,7 @@ import (
 )
 
 // ListNodes provides list of network nodes
-func (g *GrpcClient) ListNodes() (*api.NodeList, error) {
-	ctx, cancel := g.getContext()
-	defer cancel()
-
+func (g *GrpcClient) ListNodes(ctx context.Context) (*api.NodeList, error) {
 	nodeList, err := g.Client.ListNodes(ctx, new(api.EmptyMessage))
 	if err != nil {
 		zap.L().Error("List nodes", zap.Error(err))
@@ -24,25 +22,19 @@ func (g *GrpcClient) ListNodes() (*api.NodeList, error) {
 }
 
 // GetNextMaintenanceTime get next epoch timestamp
-func (g *GrpcClient) GetNextMaintenanceTime() (*api.NumberMessage, error) {
-	ctx, cancel := g.getContext()
-	defer cancel()
-
+func (g *GrpcClient) GetNextMaintenanceTime(ctx context.Context) (*api.NumberMessage, error) {
 	return g.Client.GetNextMaintenanceTime(ctx,
 		new(api.EmptyMessage))
 }
 
 // TotalTransaction return total transciton in network
-func (g *GrpcClient) TotalTransaction() (*api.NumberMessage, error) {
-	ctx, cancel := g.getContext()
-	defer cancel()
-
+func (g *GrpcClient) TotalTransaction(ctx context.Context) (*api.NumberMessage, error) {
 	return g.Client.TotalTransaction(ctx,
 		new(api.EmptyMessage))
 }
 
 // GetTransactionByID returns transaction details by ID
-func (g *GrpcClient) GetTransactionByID(id string) (*core.Transaction, error) {
+func (g *GrpcClient) GetTransactionByID(ctx context.Context, id string) (*core.Transaction, error) {
 	transactionID := new(api.BytesMessage)
 	var err error
 
@@ -50,9 +42,6 @@ func (g *GrpcClient) GetTransactionByID(id string) (*core.Transaction, error) {
 	if err != nil {
 		return nil, fmt.Errorf("get transaction by id error: %v", err)
 	}
-
-	ctx, cancel := g.getContext()
-	defer cancel()
 
 	tx, err := g.Client.GetTransactionById(ctx, transactionID)
 	if err != nil {
@@ -65,7 +54,7 @@ func (g *GrpcClient) GetTransactionByID(id string) (*core.Transaction, error) {
 }
 
 // GetTransactionInfoByID returns transaction receipt by ID
-func (g *GrpcClient) GetTransactionInfoByID(id string) (*core.TransactionInfo, error) {
+func (g *GrpcClient) GetTransactionInfoByID(ctx context.Context, id string) (*core.TransactionInfo, error) {
 	transactionID := new(api.BytesMessage)
 	var err error
 
@@ -73,9 +62,6 @@ func (g *GrpcClient) GetTransactionInfoByID(id string) (*core.TransactionInfo, e
 	if err != nil {
 		return nil, fmt.Errorf("get transaction by id error: %v", err)
 	}
-
-	ctx, cancel := g.getContext()
-	defer cancel()
 
 	txi, err := g.Client.GetTransactionInfoById(ctx, transactionID)
 	if err != nil {
@@ -88,9 +74,7 @@ func (g *GrpcClient) GetTransactionInfoByID(id string) (*core.TransactionInfo, e
 }
 
 // Broadcast broadcast TX
-func (g *GrpcClient) Broadcast(tx *core.Transaction) (*api.Return, error) {
-	ctx, cancel := g.getContext()
-	defer cancel()
+func (g *GrpcClient) Broadcast(ctx context.Context, tx *core.Transaction) (*api.Return, error) {
 	result, err := g.Client.BroadcastTransaction(ctx, tx)
 	if err != nil {
 		return nil, err
@@ -105,9 +89,6 @@ func (g *GrpcClient) Broadcast(tx *core.Transaction) (*api.Return, error) {
 }
 
 // GetNodeInfo current connection
-func (g *GrpcClient) GetNodeInfo() (*core.NodeInfo, error) {
-	ctx, cancel := g.getContext()
-	defer cancel()
-
+func (g *GrpcClient) GetNodeInfo(ctx context.Context) (*core.NodeInfo, error) {
 	return g.Client.GetNodeInfo(ctx, new(api.EmptyMessage))
 }

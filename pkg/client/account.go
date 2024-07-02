@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"math/big"
 	"time"
@@ -15,7 +16,7 @@ import (
 )
 
 // GetAccount from BASE58 address
-func (g *GrpcClient) GetAccount(addr string) (*core.Account, error) {
+func (g *GrpcClient) GetAccount(ctx context.Context, addr string) (*core.Account, error) {
 	account := new(core.Account)
 	var err error
 
@@ -23,9 +24,6 @@ func (g *GrpcClient) GetAccount(addr string) (*core.Account, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	ctx, cancel := g.getContext()
-	defer cancel()
 
 	acc, err := g.Client.GetAccount(ctx, account)
 	if err != nil {
@@ -38,14 +36,11 @@ func (g *GrpcClient) GetAccount(addr string) (*core.Account, error) {
 }
 
 // GetRewardsInfo from BASE58 address
-func (g *GrpcClient) GetRewardsInfo(addr string) (int64, error) {
+func (g *GrpcClient) GetRewardsInfo(ctx context.Context, addr string) (int64, error) {
 	addrBytes, err := common.DecodeCheck(addr)
 	if err != nil {
 		return 0, err
 	}
-
-	ctx, cancel := g.getContext()
-	defer cancel()
 
 	rewards, err := g.Client.GetRewardInfo(ctx, GetMessageBytes(addrBytes))
 	if err != nil {
@@ -55,7 +50,7 @@ func (g *GrpcClient) GetRewardsInfo(addr string) (int64, error) {
 }
 
 // GetAccountNet return account resources from BASE58 address
-func (g *GrpcClient) GetAccountNet(addr string) (*api.AccountNetMessage, error) {
+func (g *GrpcClient) GetAccountNet(ctx context.Context, addr string) (*api.AccountNetMessage, error) {
 	account := new(core.Account)
 	var err error
 
@@ -64,14 +59,11 @@ func (g *GrpcClient) GetAccountNet(addr string) (*api.AccountNetMessage, error) 
 		return nil, err
 	}
 
-	ctx, cancel := g.getContext()
-	defer cancel()
-
 	return g.Client.GetAccountNet(ctx, account)
 }
 
 // CreateAccount activate tron account
-func (g *GrpcClient) CreateAccount(from, addr string) (*api.TransactionExtention, error) {
+func (g *GrpcClient) CreateAccount(ctx context.Context, from, addr string) (*api.TransactionExtention, error) {
 	var err error
 
 	contract := &core.AccountCreateContract{}
@@ -81,8 +73,6 @@ func (g *GrpcClient) CreateAccount(from, addr string) (*api.TransactionExtention
 	if contract.AccountAddress, err = common.DecodeCheck(addr); err != nil {
 		return nil, err
 	}
-	ctx, cancel := g.getContext()
-	defer cancel()
 
 	tx, err := g.Client.CreateAccount2(ctx, contract)
 	if err != nil {
@@ -98,16 +88,13 @@ func (g *GrpcClient) CreateAccount(from, addr string) (*api.TransactionExtention
 }
 
 // UpdateAccount change account name
-func (g *GrpcClient) UpdateAccount(from, accountName string) (*api.TransactionExtention, error) {
+func (g *GrpcClient) UpdateAccount(ctx context.Context, from, accountName string) (*api.TransactionExtention, error) {
 	var err error
 	contract := &core.AccountUpdateContract{}
 	contract.AccountName = []byte(accountName)
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
 		return nil, err
 	}
-
-	ctx, cancel := g.getContext()
-	defer cancel()
 
 	tx, err := g.Client.UpdateAccount2(ctx, contract)
 	if err != nil {
@@ -123,48 +110,48 @@ func (g *GrpcClient) UpdateAccount(from, accountName string) (*api.TransactionEx
 }
 
 // GetAccountDetailed from BASE58 address
-func (g *GrpcClient) GetAccountDetailed(addr string) (*account.Account, error) {
+func (g *GrpcClient) GetAccountDetailed(ctx context.Context, addr string) (*account.Account, error) {
 
-	acc, err := g.GetAccount(addr)
+	acc, err := g.GetAccount(ctx, addr)
 	if err != nil {
 		return nil, err
 	}
 
-	accR, err := g.GetAccountResource(addr)
+	accR, err := g.GetAccountResource(ctx, addr)
 	if err != nil {
 		return nil, err
 	}
 
-	accDeleagated, err := g.GetDelegatedResources(addr)
+	accDeleagated, err := g.GetDelegatedResources(ctx, addr)
 	if err != nil {
 		return nil, err
 	}
 
-	accDeleagatedV2, err := g.GetDelegatedResourcesV2(addr)
+	accDeleagatedV2, err := g.GetDelegatedResourcesV2(ctx, addr)
 	if err != nil {
 		return nil, err
 	}
 
-	accUnfreezeLeft, err := g.GetAvailableUnfreezeCount(addr)
+	accUnfreezeLeft, err := g.GetAvailableUnfreezeCount(ctx, addr)
 	if err != nil {
 		return nil, err
 	}
 
-	rewards, err := g.GetRewardsInfo(addr)
+	rewards, err := g.GetRewardsInfo(ctx, addr)
 	if err != nil {
 		return nil, err
 	}
 
-	withdrawableAmount, err := g.GetCanWithdrawUnfreezeAmount(addr, time.Now().UnixMilli())
+	withdrawableAmount, err := g.GetCanWithdrawUnfreezeAmount(ctx, addr, time.Now().UnixMilli())
 	if err != nil {
 		return nil, err
 	}
 
-	maxCanDelegateBandwidth, err := g.GetCanDelegatedMaxSize(addr, int32(core.ResourceCode_BANDWIDTH))
+	maxCanDelegateBandwidth, err := g.GetCanDelegatedMaxSize(ctx, addr, int32(core.ResourceCode_BANDWIDTH))
 	if err != nil {
 		return nil, err
 	}
-	maxCanDelegateEnergy, err := g.GetCanDelegatedMaxSize(addr, int32(core.ResourceCode_ENERGY))
+	maxCanDelegateEnergy, err := g.GetCanDelegatedMaxSize(ctx, addr, int32(core.ResourceCode_ENERGY))
 	if err != nil {
 		return nil, err
 	}
@@ -307,15 +294,12 @@ func (g *GrpcClient) GetAccountDetailed(addr string) (*account.Account, error) {
 }
 
 // WithdrawBalance rewards from account
-func (g *GrpcClient) WithdrawBalance(from string) (*api.TransactionExtention, error) {
+func (g *GrpcClient) WithdrawBalance(ctx context.Context, from string) (*api.TransactionExtention, error) {
 	var err error
 	contract := &core.WithdrawBalanceContract{}
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
 		return nil, err
 	}
-
-	ctx, cancel := g.getContext()
-	defer cancel()
 
 	tx, err := g.Client.WithdrawBalance2(ctx, contract)
 	if err != nil {
@@ -390,7 +374,7 @@ func makePermission(name string, pType core.Permission_PermissionType, id int32,
 }
 
 // UpdateAccountPermission change account permission
-func (g *GrpcClient) UpdateAccountPermission(from string, owner, witness map[string]interface{}, actives []map[string]interface{}) (*api.TransactionExtention, error) {
+func (g *GrpcClient) UpdateAccountPermission(ctx context.Context, from string, owner, witness map[string]interface{}, actives []map[string]interface{}) (*api.TransactionExtention, error) {
 
 	if len(actives) > 8 {
 		return nil, fmt.Errorf("cant have more than 8 active operations")
@@ -454,9 +438,6 @@ func (g *GrpcClient) UpdateAccountPermission(from string, owner, witness map[str
 		}
 		contract.Witness = witnessPermission
 	}
-
-	ctx, cancel := g.getContext()
-	defer cancel()
 
 	tx, err := g.Client.AccountPermissionUpdate(ctx, contract)
 	if err != nil {

@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -21,12 +22,14 @@ var (
 )
 
 func proposalSub() []*cobra.Command {
+	ctx := context.Background()
+
 	cmdProposalList := &cobra.Command{
 		Use:   "list",
 		Short: "List network proposals",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			list, err := conn.ProposalsList()
+			list, err := conn.ProposalsList(ctx)
 			if err != nil {
 				return err
 			}
@@ -92,7 +95,7 @@ func proposalSub() []*cobra.Command {
 				return err
 			}
 
-			tx, err := conn.ProposalApprove(signerAddress.String(), id, confirm)
+			tx, err := conn.ProposalApprove(ctx, signerAddress.String(), id, confirm)
 			if err != nil {
 				return err
 			}
@@ -107,7 +110,7 @@ func proposalSub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 
@@ -147,7 +150,7 @@ func proposalSub() []*cobra.Command {
 				return err
 			}
 
-			tx, err := conn.ProposalWithdraw(signerAddress.String(), id)
+			tx, err := conn.ProposalWithdraw(ctx, signerAddress.String(), id)
 			if err != nil {
 				return err
 			}
@@ -162,7 +165,7 @@ func proposalSub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 
@@ -219,7 +222,7 @@ func proposalSub() []*cobra.Command {
 				proposals[paramID] = proposalValue
 			}
 
-			tx, err := conn.ProposalCreate(signerAddress.String(), proposals)
+			tx, err := conn.ProposalCreate(ctx, signerAddress.String(), proposals)
 			if err != nil {
 				return err
 			}
@@ -235,7 +238,7 @@ func proposalSub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 

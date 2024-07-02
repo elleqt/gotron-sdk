@@ -1,6 +1,7 @@
 package client_test
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"testing"
@@ -18,11 +19,11 @@ func TestTRC20(t *testing.T) {
 	err := c.Start(grpc.WithInsecure())
 	require.Nil(t, err)
 
-	value, err := c.TRC20GetDecimals("TN7EWmuVWrdehLwKGnU2rk42GWodbAXGUM")
+	value, err := c.TRC20GetDecimals(context.Background(), "TN7EWmuVWrdehLwKGnU2rk42GWodbAXGUM")
 	require.Nil(t, err)
 	require.Equal(t, value.Int64(), int64(0))
 
-	value, err = c.TRC20GetDecimals("TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t")
+	value, err = c.TRC20GetDecimals(context.Background(), "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t")
 	require.Nil(t, err)
 	require.Equal(t, value.Int64(), int64(6))
 }
@@ -37,7 +38,7 @@ func TestSend(t *testing.T) {
 	c := client.NewGrpcClient("")
 	err := c.Start(grpc.WithInsecure())
 	require.Nil(t, err)
-	tx, err := c.Transfer(fromAddress, toAddress, 1000)
+	tx, err := c.Transfer(context.Background(), fromAddress, toAddress, 1000)
 	require.Nil(t, err)
 
 	rawData, err := proto.Marshal(tx.Transaction.GetRawData())
@@ -53,7 +54,7 @@ func TestSend(t *testing.T) {
 	require.Nil(t, err)
 	tx.Transaction.Signature = append(tx.Transaction.Signature, signature)
 
-	result, err := c.Broadcast(tx.Transaction)
+	result, err := c.Broadcast(context.Background(), tx.Transaction)
 	require.Nil(t, err)
 	require.NotNil(t, result)
 }

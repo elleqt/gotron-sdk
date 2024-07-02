@@ -1,6 +1,7 @@
 package client_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/elleqt/gotron-sdk/pkg/client"
@@ -17,7 +18,7 @@ func TestTRC20_Balance(t *testing.T) {
 	err := conn.Start(grpc.WithInsecure())
 	require.Nil(t, err)
 
-	balance, err := conn.TRC20ContractBalance(address, trc20Contract)
+	balance, err := conn.TRC20ContractBalance(context.Background(), address, trc20Contract)
 	assert.Nil(t, err)
 	assert.Greater(t, balance.Int64(), int64(0))
 }

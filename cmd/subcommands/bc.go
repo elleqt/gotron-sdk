@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -17,12 +18,14 @@ import (
 var ()
 
 func bcSub() []*cobra.Command {
+	ctx := context.Background()
+
 	cmdNode := &cobra.Command{
 		Use:   "node",
 		Short: "get node metrics",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			info, err := conn.GetNodeInfo()
+			info, err := conn.GetNodeInfo(ctx)
 			if err != nil {
 				return err
 			}
@@ -43,7 +46,7 @@ func bcSub() []*cobra.Command {
 		Short: "get network next maintainance time",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			info, err := conn.GetNextMaintenanceTime()
+			info, err := conn.GetNextMaintenanceTime(ctx)
 			if err != nil {
 				return err
 			}
@@ -69,7 +72,7 @@ func bcSub() []*cobra.Command {
 		Short: "get tx info by hash",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			tx, err := conn.GetTransactionByID(args[0])
+			tx, err := conn.GetTransactionByID(ctx, args[0])
 			if err != nil {
 				return err
 			}
@@ -79,7 +82,7 @@ func bcSub() []*cobra.Command {
 			}
 			contract := contracts[0]
 
-			info, err := conn.GetTransactionInfoByID(args[0])
+			info, err := conn.GetTransactionInfoByID(ctx, args[0])
 			if err != nil {
 				return err
 			}

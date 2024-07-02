@@ -1,13 +1,11 @@
 package client
 
 import (
-	"context"
 	"fmt"
 	"time"
 
 	"github.com/elleqt/gotron-sdk/pkg/proto/api"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
 )
 
 // GrpcClient controller structure
@@ -63,14 +61,6 @@ func (g *GrpcClient) Start(opts ...grpc.DialOption) error {
 func (g *GrpcClient) SetAPIKey(apiKey string) error {
 	g.apiKey = apiKey
 	return nil
-}
-
-func (g *GrpcClient) getContext() (context.Context, context.CancelFunc) {
-	ctx, cancel := context.WithTimeout(context.Background(), g.grpcTimeout)
-	if len(g.apiKey) > 0 {
-		ctx = metadata.AppendToOutgoingContext(ctx, "TRON-PRO-API-KEY", g.apiKey)
-	}
-	return ctx, cancel
 }
 
 // Stop GRPC Connection

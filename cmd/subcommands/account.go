@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -26,6 +27,8 @@ var (
 )
 
 func accountSub() []*cobra.Command {
+	ctx := context.Background()
+
 	cmdBalance := &cobra.Command{
 		Use:     "balance <ACCOUNT_NAME>",
 		Short:   "Check account balance",
@@ -33,7 +36,7 @@ func accountSub() []*cobra.Command {
 		Args:    cobra.ExactArgs(1),
 		PreRunE: validateAddress,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			acc, err := conn.GetAccount(addr.String())
+			acc, err := conn.GetAccount(ctx, addr.String())
 			if err != nil {
 				return err
 			}
@@ -43,7 +46,7 @@ func accountSub() []*cobra.Command {
 				return nil
 			}
 
-			rewards, err := conn.GetRewardsInfo(addr.String())
+			rewards, err := conn.GetRewardsInfo(ctx, addr.String())
 			if err != nil {
 				return err
 			}
@@ -71,7 +74,7 @@ func accountSub() []*cobra.Command {
 			if signerAddress.String() == "" {
 				return fmt.Errorf("no signer specified")
 			}
-			tx, err := conn.CreateAccount(signerAddress.String(), addr.String())
+			tx, err := conn.CreateAccount(ctx, signerAddress.String(), addr.String())
 			if err != nil {
 				return err
 			}
@@ -87,7 +90,7 @@ func accountSub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 
@@ -127,7 +130,7 @@ func accountSub() []*cobra.Command {
 				return err
 			}
 			valueInt := int64(value * math.Pow10(6))
-			tx, err := conn.Transfer(signerAddress.String(), addr.String(), valueInt)
+			tx, err := conn.Transfer(ctx, signerAddress.String(), addr.String(), valueInt)
 			if err != nil {
 				return err
 			}
@@ -143,7 +146,7 @@ func accountSub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 
@@ -209,7 +212,7 @@ func accountSub() []*cobra.Command {
 		Args:    cobra.ExactArgs(1),
 		PreRunE: validateAddress,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			acc, err := conn.GetAccountDetailed(addr.String())
+			acc, err := conn.GetAccountDetailed(ctx, addr.String())
 			if err != nil {
 				return err
 			}
@@ -234,7 +237,7 @@ func accountSub() []*cobra.Command {
 				return fmt.Errorf("no signer specified")
 			}
 
-			tx, err := conn.WithdrawBalance(signerAddress.String())
+			tx, err := conn.WithdrawBalance(ctx, signerAddress.String())
 			if err != nil {
 				return err
 			}
@@ -250,7 +253,7 @@ func accountSub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 
@@ -309,7 +312,7 @@ func accountSub() []*cobra.Command {
 				return fmt.Errorf("invalid resource. Use 0 for Bandwidth or 1 for Energy")
 			}
 
-			tx, err := conn.FreezeBalance(
+			tx, err := conn.FreezeBalance(ctx,
 				signerAddress.String(),
 				delegateTo,
 				rType,
@@ -330,7 +333,7 @@ func accountSub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 
@@ -392,7 +395,7 @@ func accountSub() []*cobra.Command {
 				votes[wAddress.String()] = voteCount
 			}
 
-			tx, err := conn.VoteWitnessAccount(signerAddress.String(), votes)
+			tx, err := conn.VoteWitnessAccount(ctx, signerAddress.String(), votes)
 			if err != nil {
 				return err
 			}
@@ -408,7 +411,7 @@ func accountSub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 
@@ -560,7 +563,7 @@ func accountSub() []*cobra.Command {
 			}
 
 			// TODO: make more than one actives and allow different permissions
-			tx, err := conn.UpdateAccountPermission(
+			tx, err := conn.UpdateAccountPermission(ctx,
 				signerAddress.String(),
 				owner,
 				witness,
@@ -581,7 +584,7 @@ func accountSub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 

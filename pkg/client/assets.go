@@ -1,6 +1,7 @@
 package client
 
 import (
+	"context"
 	"fmt"
 	"math/big"
 	"strconv"
@@ -13,7 +14,7 @@ import (
 )
 
 // GetAssetIssueByAccount list asset issued by account
-func (g *GrpcClient) GetAssetIssueByAccount(address string) (*api.AssetIssueList, error) {
+func (g *GrpcClient) GetAssetIssueByAccount(ctx context.Context, address string) (*api.AssetIssueList, error) {
 	account := new(core.Account)
 	var err error
 
@@ -22,35 +23,23 @@ func (g *GrpcClient) GetAssetIssueByAccount(address string) (*api.AssetIssueList
 		return nil, err
 	}
 
-	ctx, cancel := g.getContext()
-	defer cancel()
-
 	return g.Client.GetAssetIssueByAccount(ctx, account)
 }
 
 // GetAssetIssueByName list asset issued by name
-func (g *GrpcClient) GetAssetIssueByName(name string) (*core.AssetIssueContract, error) {
-	ctx, cancel := g.getContext()
-	defer cancel()
-
+func (g *GrpcClient) GetAssetIssueByName(ctx context.Context, name string) (*core.AssetIssueContract, error) {
 	return g.Client.GetAssetIssueByName(ctx, GetMessageBytes([]byte(name)))
 }
 
 // GetAssetIssueByID list asset issued by ID
-func (g *GrpcClient) GetAssetIssueByID(tokenID string) (*core.AssetIssueContract, error) {
+func (g *GrpcClient) GetAssetIssueByID(ctx context.Context, tokenID string) (*core.AssetIssueContract, error) {
 	bn := new(big.Int).SetBytes([]byte(tokenID))
-
-	ctx, cancel := g.getContext()
-	defer cancel()
 
 	return g.Client.GetAssetIssueById(ctx, GetMessageBytes(bn.Bytes()))
 }
 
 // GetAssetIssueList list all TRC10
-func (g *GrpcClient) GetAssetIssueList(page int64, limit ...int) (*api.AssetIssueList, error) {
-	ctx, cancel := g.getContext()
-	defer cancel()
-
+func (g *GrpcClient) GetAssetIssueList(ctx context.Context, page int64, limit ...int) (*api.AssetIssueList, error) {
 	if page == -1 {
 		return g.Client.GetAssetIssueList(ctx, new(api.EmptyMessage))
 	}
@@ -63,7 +52,7 @@ func (g *GrpcClient) GetAssetIssueList(page int64, limit ...int) (*api.AssetIssu
 }
 
 // AssetIssue create a new asset TRC10
-func (g *GrpcClient) AssetIssue(from, name, description, abbr, urlStr string,
+func (g *GrpcClient) AssetIssue(ctx context.Context, from, name, description, abbr, urlStr string,
 	precision int32, totalSupply, startTime, endTime, FreeAssetNetLimit, PublicFreeAssetNetLimit int64,
 	trxNum, icoNum, voteScore int32, frozenSupply map[string]string) (*api.TransactionExtention, error) {
 	var err error
@@ -135,9 +124,6 @@ func (g *GrpcClient) AssetIssue(from, name, description, abbr, urlStr string,
 			FrozenSupply, assetIssueContractFrozenSupply)
 	}
 
-	ctx, cancel := g.getContext()
-	defer cancel()
-
 	tx, err := g.Client.CreateAssetIssue2(ctx, contract)
 	if err != nil {
 		return nil, err
@@ -152,7 +138,7 @@ func (g *GrpcClient) AssetIssue(from, name, description, abbr, urlStr string,
 }
 
 // UpdateAssetIssue information
-func (g *GrpcClient) UpdateAssetIssue(from, description, urlStr string,
+func (g *GrpcClient) UpdateAssetIssue(ctx context.Context, from, description, urlStr string,
 	newLimit, newPublicLimit int64) (*api.TransactionExtention, error) {
 	var err error
 
@@ -165,9 +151,6 @@ func (g *GrpcClient) UpdateAssetIssue(from, description, urlStr string,
 	contract.Url = []byte(urlStr)
 	contract.NewLimit = newLimit
 	contract.NewPublicLimit = newPublicLimit
-
-	ctx, cancel := g.getContext()
-	defer cancel()
 
 	tx, err := g.Client.UpdateAsset2(ctx, contract)
 	if err != nil {
@@ -183,7 +166,7 @@ func (g *GrpcClient) UpdateAssetIssue(from, description, urlStr string,
 }
 
 // TransferAsset from to  base58 address
-func (g *GrpcClient) TransferAsset(from, toAddress,
+func (g *GrpcClient) TransferAsset(ctx context.Context, from, toAddress,
 	assetName string, amount int64) (*api.TransactionExtention, error) {
 	var err error
 	contract := &core.TransferAssetContract{}
@@ -196,9 +179,6 @@ func (g *GrpcClient) TransferAsset(from, toAddress,
 
 	contract.AssetName = []byte(assetName)
 	contract.Amount = amount
-
-	ctx, cancel := g.getContext()
-	defer cancel()
 
 	tx, err := g.Client.TransferAsset2(ctx, contract)
 	if err != nil {
@@ -214,7 +194,7 @@ func (g *GrpcClient) TransferAsset(from, toAddress,
 }
 
 // ParticipateAssetIssue TRC10 ICO
-func (g *GrpcClient) ParticipateAssetIssue(from, issuerAddress,
+func (g *GrpcClient) ParticipateAssetIssue(ctx context.Context, from, issuerAddress,
 	tokenID string, amount int64) (*api.TransactionExtention, error) {
 	var err error
 	contract := &core.ParticipateAssetIssueContract{}
@@ -227,9 +207,6 @@ func (g *GrpcClient) ParticipateAssetIssue(from, issuerAddress,
 
 	contract.AssetName = []byte(tokenID)
 	contract.Amount = amount
-
-	ctx, cancel := g.getContext()
-	defer cancel()
 
 	tx, err := g.Client.ParticipateAssetIssue2(ctx, contract)
 	if err != nil {
@@ -245,15 +222,13 @@ func (g *GrpcClient) ParticipateAssetIssue(from, issuerAddress,
 }
 
 // UnfreezeAsset from owner
-func (g *GrpcClient) UnfreezeAsset(from string) (*api.TransactionExtention, error) {
+func (g *GrpcClient) UnfreezeAsset(ctx context.Context, from string) (*api.TransactionExtention, error) {
 	var err error
 
 	contract := &core.UnfreezeAssetContract{}
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
 		return nil, err
 	}
-	ctx, cancel := g.getContext()
-	defer cancel()
 
 	tx, err := g.Client.UnfreezeAsset2(ctx, contract)
 	if err != nil {

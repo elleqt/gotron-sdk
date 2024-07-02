@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"math"
@@ -26,6 +27,8 @@ var (
 )
 
 func trc10Sub() []*cobra.Command {
+	ctx := context.Background()
+
 	cmdIssue := &cobra.Command{
 		Use:   "issue <NAME> <DESCRIPTION> <SYMBOL> <URL> <TOTAL_SUPPLY> <RATIO>",
 		Short: "Check account balance",
@@ -100,7 +103,7 @@ func trc10Sub() []*cobra.Command {
 			}
 			// update total supply with decimals
 			totalSupply = int64(float64(totalSupply) * math.Pow10(int(issueDecimals)))
-			tx, err := conn.AssetIssue(signerAddress.String(),
+			tx, err := conn.AssetIssue(ctx, signerAddress.String(),
 				args[0], // Name
 				args[1], // Description
 				args[2], // Symbol
@@ -130,7 +133,7 @@ func trc10Sub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 
@@ -180,7 +183,7 @@ func trc10Sub() []*cobra.Command {
 			tokenID := ""
 			tokenDecimals := int32(0)
 			if _, err := strconv.Atoi(args[2]); err == nil {
-				if asset, err := conn.GetAssetIssueByID(args[2]); err == nil {
+				if asset, err := conn.GetAssetIssueByID(ctx, args[2]); err == nil {
 					if asset.Id == args[2] {
 						tokenID = args[2]
 						tokenDecimals = asset.Precision
@@ -191,7 +194,7 @@ func trc10Sub() []*cobra.Command {
 			}
 			if len(tokenID) == 0 {
 				// try by name
-				if asset, err := conn.GetAssetIssueByName(args[2]); err == nil {
+				if asset, err := conn.GetAssetIssueByName(ctx, args[2]); err == nil {
 					if string(asset.Name) == args[2] {
 						tokenID = asset.Id
 						tokenDecimals = asset.Precision
@@ -204,7 +207,7 @@ func trc10Sub() []*cobra.Command {
 			}
 
 			value = value * math.Pow10(int(tokenDecimals))
-			tx, err := conn.TransferAsset(signerAddress.String(), addr.String(), tokenID, int64(value))
+			tx, err := conn.TransferAsset(ctx, signerAddress.String(), addr.String(), tokenID, int64(value))
 			if err != nil {
 				return err
 			}
@@ -220,7 +223,7 @@ func trc10Sub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 
@@ -266,7 +269,7 @@ func trc10Sub() []*cobra.Command {
 			price := float64(0)
 			// tokenDecimals := int32(0)
 			if _, err := strconv.Atoi(args[0]); err == nil {
-				if asset, err := conn.GetAssetIssueByID(args[0]); err == nil {
+				if asset, err := conn.GetAssetIssueByID(ctx, args[0]); err == nil {
 					if asset.Id == args[0] {
 						tokenID = args[0]
 						// tokenDecimals = asset.Precision
@@ -279,7 +282,7 @@ func trc10Sub() []*cobra.Command {
 			}
 			if len(tokenID) == 0 {
 				// try by name
-				if asset, err := conn.GetAssetIssueByName(args[0]); err == nil {
+				if asset, err := conn.GetAssetIssueByName(ctx, args[0]); err == nil {
 					if string(asset.Name) == args[0] {
 						tokenID = asset.Id
 						// tokenDecimals = asset.Precision
@@ -295,7 +298,7 @@ func trc10Sub() []*cobra.Command {
 
 			// participate amount is TRX value
 			valueInt := int64(value * math.Pow10(6))
-			tx, err := conn.ParticipateAssetIssue(signerAddress.String(), issuerAddress, tokenID, valueInt)
+			tx, err := conn.ParticipateAssetIssue(ctx, signerAddress.String(), issuerAddress, tokenID, valueInt)
 			if err != nil {
 				return err
 			}
@@ -311,7 +314,7 @@ func trc10Sub() []*cobra.Command {
 				}
 				ctrlr = transaction.NewController(conn, ks, acct, tx.Transaction, opts)
 			}
-			if err = ctrlr.ExecuteTransaction(); err != nil {
+			if err = ctrlr.ExecuteTransaction(ctx); err != nil {
 				return err
 			}
 
@@ -344,7 +347,7 @@ func trc10Sub() []*cobra.Command {
 		Short: "list TRC10 tokens",
 		Args:  cobra.ExactArgs(0),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			list, err := conn.GetAssetIssueList(-1)
+			list, err := conn.GetAssetIssueList(ctx, -1)
 			if err != nil {
 				return err
 			}
@@ -389,7 +392,7 @@ func trc10Sub() []*cobra.Command {
 			var err error
 			found := false
 			if _, err := strconv.Atoi(args[0]); err == nil {
-				if asset, err = conn.GetAssetIssueByID(args[0]); err == nil {
+				if asset, err = conn.GetAssetIssueByID(ctx, args[0]); err == nil {
 					if asset.Id == args[0] {
 						found = true
 					}
@@ -397,7 +400,7 @@ func trc10Sub() []*cobra.Command {
 			}
 			if !found {
 				// try by name
-				if asset, err = conn.GetAssetIssueByName(args[0]); err == nil {
+				if asset, err = conn.GetAssetIssueByName(ctx, args[0]); err == nil {
 					if string(asset.Name) == args[0] {
 						found = true
 					}
@@ -405,7 +408,7 @@ func trc10Sub() []*cobra.Command {
 			}
 			if !found {
 				// try by issuer
-				if list, err := conn.GetAssetIssueByAccount(args[0]); err == nil {
+				if list, err := conn.GetAssetIssueByAccount(ctx, args[0]); err == nil {
 					if len(list.AssetIssue) == 1 &&
 						address.Address(list.AssetIssue[0].GetOwnerAddress()).String() == args[0] {
 						asset = list.GetAssetIssue()[0]

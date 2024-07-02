@@ -1,6 +1,7 @@
 package client
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/elleqt/gotron-sdk/pkg/common"
@@ -10,7 +11,7 @@ import (
 )
 
 // Transfer from to base58 address
-func (g *GrpcClient) Transfer(from, toAddress string, amount int64) (*api.TransactionExtention, error) {
+func (g *GrpcClient) Transfer(ctx context.Context, from, toAddress string, amount int64) (*api.TransactionExtention, error) {
 	var err error
 
 	contract := &core.TransferContract{}
@@ -21,9 +22,6 @@ func (g *GrpcClient) Transfer(from, toAddress string, amount int64) (*api.Transa
 		return nil, err
 	}
 	contract.Amount = amount
-
-	ctx, cancel := g.getContext()
-	defer cancel()
 
 	tx, err := g.Client.CreateTransaction2(ctx, contract)
 	if err != nil {
